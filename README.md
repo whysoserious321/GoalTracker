@@ -1,0 +1,1 @@
+Simple project that tracks goal completion for two types (Meditation/Steps) on a per streak and percentage basis. In addition, points are also awarded for doing uncomfortable things and growing your aMCC
