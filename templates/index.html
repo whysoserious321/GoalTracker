@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Goal Tracker</title>
+  <!-- Bootstrap CSS -->
+  <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  />
+  <style>
+    /* Custom styling */
+    .goal-achievement {
+      font-size: 1.5em;
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .badge-custom {
+      font-size: 1.5em;
+      padding: 10px;
+    }
+
+    .badge-meditation {
+      background-color: #28a745;
+      color: white;
+    }
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Responsive chart container */
+    .chart-container {
+      position: relative;
+      margin: auto;
+      width: 100%;
+      height: 150px; /* Adjust as needed */
+    }
+
+    /* Slightly Smaller Buttons with Rounded Edges */
+    .bigger-button {
+      font-size: 1.5em;
+      padding: 0.6em 1.5em;
+      border-radius: 15px;
+    }
+  </style>
+</head>
+<body class="container mt-5">
+
+  <!-- Percentages with Bootstrap Badges at the top -->
+  <div class="goal-achievement">
+    {% for goal in goals %}
+      <p>{{ goal.replace('_', ' ').title() }}:
+        {% if goal == 'meditation' %}
+          <span class="badge badge-custom badge-meditation">{{ percentages[goal]|round(2) }}%</span>
+        {% else %}
+          <span class="badge badge-primary badge-custom">{{ percentages[goal]|round(2) }}%</span>
+        {% endif %}
+<p class="text-center">
+            <strong>Current Streak:</strong> {{ current_streaks[goal] }} day(s)
+          </p>
+      </p>
+    {% endfor %}
+  </div>
+
+  <!-- Click Analysis: show sum and average, hide the daily table -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="my-4 text-center">Click Analysis</h2>
+<div class="goal-achievement">
+  <p>
+    <strong>Total:</strong>
+    <span class="badge badge-custom badge-meditation">{{ total_sum }}</span>
+  </p>
+  <p>
+    <strong>Average:</strong>
+    <span class="badge badge-custom badge-primary">{{ average_sum|round(2) }}</span>
+  </p>
+</div>
+
+  <!-- Ticking and Updating Section -->
+  <!-- Removed onsubmit="setScrollFlag()" -->
+  <form method="POST">
+    <div class="d-flex justify-content-center mb-5">
+      <button type="submit" class="btn btn-primary btn-lg">Update</button>
+    </div>
+    <div class="table-responsive mb-5">
+      <table class="table table-bordered table-striped">
+        <thead class="thead-light">
+          <tr>
+            <th>Date</th>
+            {% for goal in goals %}
+              <th>{{ goal.replace('_', ' ').title() }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for date in last_seven_days | reverse %}
+          <tr>
+            <td>{{ date }}</td>
+            {% for goal in goals %}
+            <td class="text-center">
+              <input
+                type="checkbox"
+                name="{{ date }}_{{ goal }}"
+                {% if streak_data[goal][date] %}checked{% endif %}
+              />
+            </td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </form>
+
+  <!-- Goal Information Cards -->
+  <div class="row">
+    {% for goal in goals %}
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title text-center">{{ goal.replace('_', ' ').title() }}</h4>
+          <p class="text-center">
+            {% if goal == 'meditation' %}
+              <span class="badge badge-custom badge-meditation">{{ percentages[goal]|round(2) }}%</span>
+            {% else %}
+              <span class="badge badge-primary badge-custom">{{ percentages[goal]|round(2) }}%</span>
+            {% endif %}
+          </p>
+          <p class="text-center">
+            <strong>Current Streak:</strong> {{ current_streaks[goal] }} day(s)
+          </p>
+          <p class="text-center">
+            <strong>Longest Streak:</strong> {{ longest_streaks[goal] }} day(s)
+          </p>
+          <p class="text-center">
+            <strong>Second Longest Streak:</strong> {{ second_longest_streaks[goal] }} day(s)
+          </p>
+          <p class="text-center">
+            <strong>Last Failures:</strong>
+            {% if last_failures[goal]|length == 0 %}
+              None!
+            {% else %}
+              {{ last_failures[goal]|join(', ') }}
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pie Charts at the Bottom -->
+  <h2 class="mb-4 text-center">Weekly Completion Charts</h2>
+  <div class="row">
+    {% for goal in goals %}
+    <div class="col-12 mb-4">
+      <h3 class="text-center">{{ goal.replace('_', ' ').title() }}</h3>
+      <div class="row">
+        {% for day_data in weekly_chart_data[goal] %}
+        <div class="col-6 col-md-4 text-center mb-3">
+          <div class="chart-container" style="height: 150px; width: 100%;">
+            <canvas id="chart-{{ goal }}-{{ day_data.day }}"></canvas>
+          </div>
+          <p>{{ day_data.day }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- NEW SECTION: Grow the anterior Mid Cingulate Cortex -->
+  <h2 class="text-center mb-4">Grow the anterior Mid Cingulate Cortex</h2>
+  <div class="d-flex justify-content-center mb-5">
+    <!-- Removed onsubmit="setScrollFlag()" -->
+    <form action="{{ url_for('increment') }}" method="POST" style="display: inline-block; margin-right: 10px;">
+      <input type="hidden" name="value" value="1">
+      <button type="submit" class="btn btn-success bigger-button celebration-button">1x</button>
+    </form>
+    <form action="{{ url_for('increment') }}" method="POST" style="display: inline-block; margin-right: 10px;">
+      <input type="hidden" name="value" value="2">
+      <button type="submit" class="btn btn-success bigger-button celebration-button">2x</button>
+    </form>
+    <form action="{{ url_for('increment') }}" method="POST" style="display: inline-block;">
+      <input type="hidden" name="value" value="0.5">
+      <button type="submit" class="btn btn-success bigger-button celebration-button">0.5x</button>
+    </form>
+  </div>
+
+      <!-- Hidden daily sums table -->
+      <div style="display:none;">
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped">
+            <thead class="thead-light">
+              <tr>
+                <th>Date</th>
+                <th>Sum</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for date_str, s in click_sums.items() %}
+              <tr>
+                <td>{{ date_str }}</td>
+                <td>{{ s }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies (Optional) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+  <!-- Chart.js Library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Confetti library (for celebratory animation) -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+  <script>
+    // Generate Pie Charts for each day of the week
+    const weeklyChartData = {{ weekly_chart_data|tojson }};
+    const goals = {{ goals|tojson }};
+
+    goals.forEach(function(goal) {
+      const goalData = weeklyChartData[goal];
+      goalData.forEach(function(dayData) {
+        const ctx = document.getElementById('chart-' + goal + '-' + dayData.day).getContext('2d');
+        new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: ['Achieved', 'Not Achieved'],
+            datasets: [{
+              data: [dayData['achieved'], dayData['not_achieved']],
+              backgroundColor: [
+                goal === 'meditation' ? '#28a745' : '#007bff',
+                '#dddddd'
+              ],
+              borderColor: '#ffffff',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    let label = context.label || '';
+                    if (label) {
+                      label += ': ';
+                    }
+                    if (context.parsed !== null) {
+                      const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                      const value = context.parsed;
+                      const percentage = total > 0
+                        ? (value / total * 100).toFixed(2)
+                        : 0;
+                      label += percentage + '%';
+                    }
+                    return label;
+                  }
+                }
+              }
+            }
+          }
+        });
+      });
+    });
+
+    // Confetti code (3-second burst before submission)
+    const celebrationButtons = document.querySelectorAll('.celebration-button');
+    function showConfetti() {
+      const duration = 3000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+      function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      const interval = setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+        const particleCount = 50 * (timeLeft / duration);
+        confetti(Object.assign({}, defaults, {
+          particleCount,
+          origin: {
+            x: randomInRange(0.1, 0.9),
+            y: Math.random() - 0.2
+          }
+        }));
+      }, 250);
+    }
+
+    function handleButtonClick(evt) {
+      evt.preventDefault(); // stop immediate form submission
+      showConfetti();       // start confetti
+      // Wait 3 seconds, then submit form
+      setTimeout(() => {
+        evt.target.closest('form').submit();
+      }, 3000);
+    }
+
+    celebrationButtons.forEach(button => {
+      button.addEventListener('click', handleButtonClick);
+      button.addEventListener('touchstart', handleButtonClick);
+    });
+  </script>
+</body>
+</html>

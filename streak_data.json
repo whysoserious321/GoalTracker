@@ -1,0 +1,981 @@
+{
+    "dates": {
+        "2024-09-30": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-01": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-02": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-03": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-04": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-05": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-06": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-07": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-08": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-09": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-10": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-11": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-12": {
+            "step_count": false,
+            "meditation": false
+        },
+        "2024-10-13": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-14": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-15": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-16": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-17": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-18": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-19": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-20": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-21": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-22": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-23": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-24": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-25": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-26": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-27": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-28": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-29": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-30": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-10-31": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-01": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-02": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-03": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-04": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-05": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-06": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-07": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-08": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-09": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-10": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-11": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-12": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-13": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-14": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-15": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-16": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-17": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-18": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-19": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-20": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-21": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-22": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-23": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-24": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-25": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-26": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-27": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-28": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-29": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-11-30": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-01": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-02": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-03": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-04": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-05": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-06": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-07": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-08": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-09": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-10": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-11": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-12": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-13": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-14": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-15": {
+            "step_count": false,
+            "meditation": false
+        },
+        "2024-12-16": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-17": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-18": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-19": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-20": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-22": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-23": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-24": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-25": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-26": {
+            "step_count": false,
+            "meditation": false
+        },
+        "2024-12-27": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-28": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-29": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-30": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2024-12-31": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-01": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-02": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-03": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-04": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-05": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-06": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-07": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-08": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-09": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-10": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-11": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-12": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-13": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-14": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-15": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-16": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-17": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-18": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-19": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-20": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-21": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-22": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-23": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-24": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-25": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-26": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-27": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-28": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-29": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-30": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-01-31": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-01": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-02": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-03": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-04": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-05": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-06": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-07": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-08": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-09": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-10": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-11": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-12": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-13": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-14": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-15": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-16": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-17": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-18": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-19": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-20": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-21": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-22": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-23": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-24": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-25": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-26": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-27": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-02-28": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-01": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-02": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-03": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-04": {
+            "step_count": false,
+            "meditation": false
+        },
+        "2025-03-05": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-06": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-07": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-08": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-09": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-10": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-11": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-12": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-13": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-14": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-15": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-16": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-17": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-18": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-19": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-20": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-21": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-22": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-23": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-24": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-25": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-26": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-27": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-28": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-29": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-03-30": {
+            "step_count": false,
+            "meditation": false
+        },
+        "2025-03-31": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-01": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-02": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-03": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-04": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-05": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-06": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-07": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-08": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-09": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-10": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-11": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-12": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-13": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-14": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-15": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-16": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-17": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-18": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-19": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-20": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-21": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-22": {
+            "step_count": false,
+            "meditation": false
+        },
+        "2025-04-23": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-24": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-25": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-26": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-27": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-28": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-29": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-04-30": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-05-01": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-05-02": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-05-03": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-05-04": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-05-05": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-05-06": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-05-07": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-05-08": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-05-09": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-05-10": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-05-11": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-05-12": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2025-05-13": {
+            "step_count": true,
+            "meditation": true
+        }
+    },
+    "click_data": {
+        "2025-01-01": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
+        },
+        "2025-01-07": {
+            "1x": 0,
+            "2x": 1,
+            "0.5x": 0
+        },
+        "2025-01-10": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
+        },
+        "2025-01-19": {
+            "1x": 0,
+            "2x": 1,
+            "0.5x": 1
+        },
+        "2025-01-21": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
+        },
+        "2025-02-03": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
+        },
+        "2025-02-15": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
+        },
+        "2025-02-27": {
+            "1x": 0,
+            "2x": 0,
+            "0.5x": 1
+        },
+        "2025-02-28": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
+        },
+        "2025-03-12": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
+        },
+        "2025-03-15": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
+        },
+        "2025-03-26": {
+            "1x": 0,
+            "2x": 0,
+            "0.5x": 1
+        },
+        "2025-03-29": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
+        },
+        "2025-04-21": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
+        },
+        "2025-04-23": {
+            "1x": 0,
+            "2x": 0,
+            "0.5x": 1
+        }
+    }
+}
