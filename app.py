@@ -130,26 +130,25 @@ def index():
     if 'click_data' not in data:
         data['click_data'] = {}
 
+    current_year = str(datetime.now().year)
+    current_month = datetime.now().month
     click_sums = {}
-    # Gather click sums and collect unique months
-    unique_months = set()
+    
+    # Filter only for the current year (2026)
     for date_str, click_info in data['click_data'].items():
-        # Parse the date and add the year-month string to the set
-        date_obj = datetime.strptime(date_str, '%Y-%m-%d')
-        unique_months.add(date_obj.strftime('%Y-%m'))
-        # Calculate sum for each date
-        day_sum = (
-            click_info.get('1x', 0) * 1.0 +
-            click_info.get('2x', 0) * 2.0 +
-            click_info.get('0.5x', 0) * 0.5
-        )
-        click_sums[date_str] = day_sum
+        if date_str.startswith(current_year):
+            day_sum = (
+                click_info.get('1x', 0) * 1.0 +
+                click_info.get('2x', 0) * 2.0 +
+                click_info.get('0.5x', 0) * 0.5
+            )
+            click_sums[date_str] = day_sum
 
     total_sum = sum(click_sums.values())
-    num_months = len(unique_months)
     
-    # Compute average per month
-    average_sum = total_sum / num_months if num_months > 0 else 0
+    # Average is now based on the current month number (1-12) 
+    # This ensures it updates even if no entries are made this month.
+    average_sum = total_sum / current_month if current_month > 0 else 0
 
     return render_template(
         'index.html',
