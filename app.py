@@ -6,190 +6,260 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 
 DATA_FILE = 'streak_data.json'
-GOALS = ['step_count', 'meditation']
+
+# no_f and meditation are daily; weekly_cardio is weekly
+DAILY_GOALS   = ['no_f', 'meditation']
+WEEKLY_GOALS  = ['weekly_cardio']
+GOALS         = DAILY_GOALS + WEEKLY_GOALS
+
+GOAL_DISPLAY_NAMES = {
+    'no_f':          'No F',
+    'meditation':    'Meditation',
+    'weekly_cardio': 'Weekly Cardio',
+}
+
 
 def load_data():
     if not os.path.exists(DATA_FILE):
-        data = {'dates': {}}
+        data = {'dates': {}, 'weeks': {}, 'click_data': {}}
         save_data(data)
+        return data
     with open(DATA_FILE, 'r') as f:
-        return json.load(f)
+        data = json.load(f)
+    if 'weeks' not in data:
+        data['weeks'] = {}
+    return data
+
 
 def save_data(data):
     with open(DATA_FILE, 'w') as f:
         json.dump(data, f, indent=4)
 
+
 def get_last_n_days(n):
     today = datetime.now().date()
     return [(today - timedelta(days=i)).isoformat() for i in range(n - 1, -1, -1)]
 
+
+def get_last_n_weeks(n):
+    today = datetime.now().date()
+    current_monday = today - timedelta(days=today.weekday())
+    result = []
+    for i in range(n - 1, -1, -1):
+        week_start = current_monday - timedelta(weeks=i)
+        week_end   = week_start + timedelta(days=6)
+        result.append({
+            'key':         week_start.isoformat(),
+            'label':       f"{week_start.strftime('%b %d')} – {week_end.strftime('%b %d')}",
+            'short_label': week_start.strftime('%b %d'),
+        })
+    return result
+
+
+def calc_streaks(bool_list):
+    streaks, current = [], 0
+    for achieved in bool_list:
+        if achieved:
+            current += 1
+        else:
+            if current > 0:
+                streaks.append(current)
+            current = 0
+    if current > 0:
+        streaks.append(current)
+    return current, sorted(streaks, reverse=True)
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    data = load_data()
+    data            = load_data()
     last_seven_days = get_last_n_days(7)
+    last_four_weeks = get_last_n_weeks(4)
 
-    # Update daily checkboxes if "Update" button is clicked
     if request.method == 'POST' and 'value' not in request.form:
         for date in last_seven_days:
             if date not in data['dates']:
                 data['dates'][date] = {}
-            for goal in GOALS:
-                achieved = request.form.get(f'{date}_{goal}') == 'on'
-                data['dates'][date][goal] = achieved
+            for goal in DAILY_GOALS:
+                data['dates'][date][goal] = (
+                    request.form.get(f'{date}_{goal}') == 'on'
+                )
+        for week in last_four_weeks:
+            wk = week['key']
+            if wk not in data['weeks']:
+                data['weeks'][wk] = {}
+            for goal in WEEKLY_GOALS:
+                data['weeks'][wk][goal] = (
+                    request.form.get(f'{wk}_{goal}') == 'on'
+                )
         save_data(data)
         return redirect(url_for('index'))
 
-    # Build all the goal-related data
-    streak_data = {}
-    percentages = {}
-    current_streaks = {}
-    longest_streaks = {}
+    streak_data            = {}
+    percentages            = {}
+    current_streaks        = {}
+    longest_streaks        = {}
     second_longest_streaks = {}
-    last_failures = {}
-    day_of_week_data = {}
-    weekly_chart_data = {}
+    last_failures          = {}
+    weekly_chart_data      = {}
 
-    for goal in GOALS:
-        day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-        day_of_week_data[goal] = {day: {'achieved': 0, 'total': 0} for day in day_names}
+    day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-        # Collect all dates in chronological order
+    # ── Daily goals ───────────────────────────────────────────────────────
+    for goal in DAILY_GOALS:
+        dow       = {d: {'achieved': 0, 'total': 0} for d in day_names}
         all_dates = sorted(data['dates'].keys())
-        streaks = []
-        current_streak = 0
+        bool_list = [data['dates'][d].get(goal, False) for d in all_dates]
+        cur, sorted_s = calc_streaks(bool_list)
 
-        # Calculate streaks
-        for date in all_dates:
-            achieved = data['dates'][date].get(goal, False)
-            if achieved:
-                current_streak += 1
-            else:
-                if current_streak > 0:
-                    streaks.append(current_streak)
-                current_streak = 0
-        if current_streak > 0:
-            streaks.append(current_streak)
+        current_streaks[goal]        = cur
+        longest_streaks[goal]        = sorted_s[0] if sorted_s else 0
+        second_longest_streaks[goal] = sorted_s[1] if len(sorted_s) > 1 else 0
 
-        sorted_streaks = sorted(streaks, reverse=True)
-        longest_streaks[goal] = sorted_streaks[0] if len(sorted_streaks) > 0 else 0
-        second_longest_streaks[goal] = sorted_streaks[1] if len(sorted_streaks) > 1 else 0
-        current_streaks[goal] = current_streak
-
-        # Last 3 failures
         failures = []
         for date in reversed(all_dates):
-            achieved = data['dates'][date].get(goal, None)
-            if achieved is False:
+            val = data['dates'][date].get(goal, None)
+            if val is False:
                 failures.append(date)
             if len(failures) >= 3:
                 break
         last_failures[goal] = failures
 
-        # Percentage calculation
-        total_days = 0
-        achieved_days = 0
-        for date in data['dates']:
-            achieved_flag = data['dates'][date].get(goal, None)
-            if achieved_flag is not None:
+        total_days, achieved_days = 0, 0
+        for date in all_dates:
+            val = data['dates'][date].get(goal, None)
+            if val is not None:
                 total_days += 1
-                if achieved_flag:
+                if val:
                     achieved_days += 1
+                day_name = datetime.strptime(date, '%Y-%m-%d').strftime('%A')
+                dow[day_name]['total'] += 1
+                if val:
+                    dow[day_name]['achieved'] += 1
 
-                # Map each date to day of the week
-                date_obj = datetime.strptime(date, '%Y-%m-%d')
-                day_name = date_obj.strftime('%A')
-                dow_data = day_of_week_data[goal][day_name]
-                dow_data['total'] += 1
-                if achieved_flag:
-                    dow_data['achieved'] += 1
+        percentages[goal] = (achieved_days / total_days * 100) if total_days else 0
 
-        percentage = (achieved_days / total_days * 100) if total_days else 0
-        percentages[goal] = percentage
-
-        # Weekly chart data
+        weekly_chart_data[goal] = []
         for day in day_names:
-            dow_data = day_of_week_data[goal][day]
-            if dow_data['total'] > 0:
-                day_percentage = dow_data['achieved'] / dow_data['total'] * 100
-            else:
-                day_percentage = None
-            weekly_chart_data.setdefault(goal, []).append({
-                'day': day,
-                'percentage': day_percentage,
-                'achieved': dow_data['achieved'],
-                'not_achieved': dow_data['total'] - dow_data['achieved'],
+            d   = dow[day]
+            pct = (d['achieved'] / d['total'] * 100) if d['total'] > 0 else None
+            weekly_chart_data[goal].append({
+                'day':          day,
+                'percentage':   pct,
+                'achieved':     d['achieved'],
+                'not_achieved': d['total'] - d['achieved'],
             })
 
-        # Prepare streak_data for the last seven days
         streak_data[goal] = {
             date: data['dates'].get(date, {}).get(goal, False)
             for date in last_seven_days
         }
 
-    # --- Summation/Click Data Analysis ---
+    # ── Weekly goals ──────────────────────────────────────────────────────
+    for goal in WEEKLY_GOALS:
+        all_weeks = sorted(data['weeks'].keys())
+        bool_list = [data['weeks'][wk].get(goal, False) for wk in all_weeks]
+        cur, sorted_s = calc_streaks(bool_list)
+
+        current_streaks[goal]        = cur
+        longest_streaks[goal]        = sorted_s[0] if sorted_s else 0
+        second_longest_streaks[goal] = sorted_s[1] if len(sorted_s) > 1 else 0
+
+        failures = []
+        for wk in reversed(all_weeks):
+            val = data['weeks'][wk].get(goal, None)
+            if val is False:
+                failures.append(wk)
+            if len(failures) >= 3:
+                break
+        last_failures[goal] = failures
+
+        recorded = [
+            data['weeks'][wk].get(goal, None)
+            for wk in all_weeks
+            if data['weeks'][wk].get(goal, None) is not None
+        ]
+        total = len(recorded)
+        percentages[goal] = (sum(recorded) / total * 100) if total else 0
+
+        streak_data[goal] = {
+            week['key']: data['weeks'].get(week['key'], {}).get(goal, False)
+            for week in last_four_weeks
+        }
+
+        weekly_chart_data[goal] = []
+        for week in get_last_n_weeks(8):
+            wk  = week['key']
+            val = data['weeks'].get(wk, {}).get(goal, None)
+            weekly_chart_data[goal].append({
+                'day':          week['short_label'],
+                'full_label':   week['label'],
+                'achieved':     1 if val is True  else 0,
+                'not_achieved': 1 if val is False else 0,
+                'no_data':      1 if val is None  else 0,
+            })
+
+    # ── Click analysis (unchanged) ────────────────────────────────────────
     if 'click_data' not in data:
         data['click_data'] = {}
 
-    current_year = str(datetime.now().year)
+    current_year  = str(datetime.now().year)
     current_month = datetime.now().month
-    click_sums = {}
-    
-    # Filter only for the current year (2026)
+    click_sums    = {}
+
     for date_str, click_info in data['click_data'].items():
         if date_str.startswith(current_year):
-            day_sum = (
-                click_info.get('1x', 0) * 1.0 +
-                click_info.get('2x', 0) * 2.0 +
+            click_sums[date_str] = (
+                click_info.get('1x',   0) * 1.0 +
+                click_info.get('2x',   0) * 2.0 +
                 click_info.get('0.5x', 0) * 0.5
             )
-            click_sums[date_str] = day_sum
 
-    total_sum = sum(click_sums.values())
-    
-    # Average is now based on the current month number (1-12) 
-    # This ensures it updates even if no entries are made this month.
+    total_sum   = sum(click_sums.values())
     average_sum = total_sum / current_month if current_month > 0 else 0
 
     return render_template(
         'index.html',
-        last_seven_days=last_seven_days,
-        streak_data=streak_data,
-        percentages=percentages,
-        goals=GOALS,
-        current_streaks=current_streaks,
-        longest_streaks=longest_streaks,
-        second_longest_streaks=second_longest_streaks,
-        last_failures=last_failures,
-        weekly_chart_data=weekly_chart_data,
-        click_sums=click_sums,
-        total_sum=total_sum,
-        average_sum=average_sum
+        last_seven_days        = last_seven_days,
+        last_four_weeks        = last_four_weeks,
+        streak_data            = streak_data,
+        percentages            = percentages,
+        goals                  = GOALS,
+        daily_goals            = DAILY_GOALS,
+        weekly_goals           = WEEKLY_GOALS,
+        goal_display_names     = GOAL_DISPLAY_NAMES,
+        current_streaks        = current_streaks,
+        longest_streaks        = longest_streaks,
+        second_longest_streaks = second_longest_streaks,
+        last_failures          = last_failures,
+        weekly_chart_data      = weekly_chart_data,
+        click_sums             = click_sums,
+        total_sum              = total_sum,
+        average_sum            = average_sum,
     )
+
 
 @app.route('/increment', methods=['POST'])
 def increment():
-    value = request.form.get('value')  # '1', '2', or '0.5'
-    data = load_data()
+    value = request.form.get('value')
+    data  = load_data()
     today = str(datetime.now().date())
 
     if 'click_data' not in data:
         data['click_data'] = {}
     if today not in data['click_data']:
-        data['click_data'][today] = {
-            '1x': 0,
-            '2x': 0,
-            '0.5x': 0
-        }
+        data['click_data'][today] = {'1x': 0, '2x': 0, '0.5x': 0}
 
     if value == '1':
-        data['click_data'][today]['1x'] += 1
+        data['click_data'][today]['1x']   += 1
     elif value == '2':
-        data['click_data'][today]['2x'] += 1
+        data['click_data'][today]['2x']   += 1
     elif value == '0.5':
         data['click_data'][today]['0.5x'] += 1
 
     save_data(data)
     return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=False)

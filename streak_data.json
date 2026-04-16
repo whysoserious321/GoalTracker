@@ -2175,6 +2175,79 @@
         "2026-03-30": {
             "step_count": true,
             "meditation": true
+        },
+        "2026-03-31": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2026-04-01": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2026-04-02": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2026-04-03": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2026-04-04": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2026-04-05": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2026-04-06": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2026-04-07": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2026-04-08": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2026-04-09": {
+            "step_count": true,
+            "meditation": true
+        },
+        "2026-04-10": {
+            "step_count": true,
+            "meditation": true,
+            "no_f": true
+        },
+        "2026-04-11": {
+            "step_count": true,
+            "meditation": true,
+            "no_f": true
+        },
+        "2026-04-12": {
+            "step_count": true,
+            "meditation": true,
+            "no_f": true
+        },
+        "2026-04-13": {
+            "step_count": true,
+            "meditation": true,
+            "no_f": true
+        },
+        "2026-04-14": {
+            "step_count": true,
+            "meditation": true,
+            "no_f": true
+        },
+        "2026-04-15": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-04-16": {
+            "no_f": true,
+            "meditation": true
         }
     },
     "click_data": {
@@ -2377,6 +2450,25 @@
             "1x": 1,
             "2x": 0,
             "0.5x": 0
+        },
+        "2026-04-14": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
+        }
+    },
+    "weeks": {
+        "2026-04-13": {
+            "weekly_cardio": true
+        },
+        "2026-03-23": {
+            "weekly_cardio": true
+        },
+        "2026-03-30": {
+            "weekly_cardio": true
+        },
+        "2026-04-06": {
+            "weekly_cardio": true
         }
     }
 }

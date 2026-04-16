@@ -2,251 +2,580 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Goal Tracker</title>
-  <!-- Bootstrap CSS -->
-  <link
-    rel="stylesheet"
-    href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    /* Custom styling */
-    .goal-achievement {
-      font-size: 1.5em;
-      text-align: center;
-      margin-top: 20px;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #f0f4ff;
+      --card:       #ffffff;
+      --border:     #e4e9f2;
+      --text:       #1a1f36;
+      --muted:      #6b7a99;
+      --primary:    #5b5ef4;
+      --nof:        #059669;
+      --nof-2:      #34d399;
+      --med:        #7c3aed;
+      --med-2:      #a78bfa;
+      --cardio:     #0ea5e9;
+      --cardio-2:   #38bdf8;
+      --danger:     #ef4444;
+      --r:          16px;
+      --r-sm:       10px;
+      --shadow:     0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
+      --shadow-lg:  0 10px 30px rgba(0,0,0,.10),0 4px 8px rgba(0,0,0,.05);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 48px;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--med) 100%);
+      padding: 28px 20px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; left: 0; right: 0;
+      height: 60px;
+      background: var(--bg);
+      border-radius: 50% 50% 0 0 / 30px 30px 0 0;
+    }
+    .header h1 { font-size: 1.75rem; font-weight: 800; color: #fff; letter-spacing: -.5px; }
+    .header p  { font-size: .875rem; color: rgba(255,255,255,.75); margin-top: 4px; }
+
+    /* Wrapper */
+    .wrapper { max-width: 680px; margin: 0 auto; padding: 0 16px; }
+
+    /* Cards */
+    .card { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 20px; }
+    .card-body { padding: 20px; }
+
+    /* Section label */
+    .section-label {
+      font-size: .7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--muted); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-label::before {
+      content: ''; display: block; width: 3px; height: 14px; border-radius: 2px;
+      background: linear-gradient(180deg, var(--primary), var(--med));
+    }
+
+    /* Quick stat grid — 3 columns */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: -32px;
       margin-bottom: 20px;
     }
+    @media (max-width: 400px) { .stats-grid { grid-template-columns: repeat(3,1fr); gap: 8px; } }
 
-    .badge-custom {
-      font-size: 1.5em;
-      padding: 10px;
-    }
-
-    .badge-meditation {
-      background-color: #28a745;
-      color: white;
-    }
-
-    input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-    }
-
-    /* Responsive chart container */
-    .chart-container {
+    .stat-card {
+      border-radius: var(--r);
+      padding: 14px 12px;
+      color: #fff;
+      box-shadow: var(--shadow-lg);
       position: relative;
-      margin: auto;
-      width: 100%;
-      height: 150px; /* Adjust as needed */
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: ''; position: absolute; top: -18px; right: -18px;
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(255,255,255,.13);
+    }
+    .stat-card.nof     { background: linear-gradient(135deg, var(--nof),    var(--nof-2));    }
+    .stat-card.med     { background: linear-gradient(135deg, var(--med),    var(--med-2));    }
+    .stat-card.cardio  { background: linear-gradient(135deg, var(--cardio), var(--cardio-2)); }
+    .stat-card .sc-pct    { font-size: 1.7rem; font-weight: 800; line-height: 1; letter-spacing: -1px; }
+    .stat-card .sc-name   { font-size: .72rem; font-weight: 600; opacity: .85; margin-top: 2px; }
+    .stat-card .sc-streak { font-size: .7rem; margin-top: 7px; opacity: .8; }
+
+    /* Goal tags */
+    .goal-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 50px;
+      font-size: .75rem; font-weight: 700; margin-bottom: 12px;
+    }
+    .goal-tag .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .goal-tag.nof    { background: #d1fae5; color: var(--nof);    }
+    .goal-tag.nof    .dot { background: var(--nof);    }
+    .goal-tag.med    { background: #ede9fe; color: var(--med);    }
+    .goal-tag.med    .dot { background: var(--med);    }
+    .goal-tag.cardio { background: #e0f2fe; color: var(--cardio); }
+    .goal-tag.cardio .dot { background: var(--cardio); }
+
+    /* Goal sections inside the form */
+    .goal-section + .goal-section {
+      margin-top: 20px; padding-top: 20px;
+      border-top: 1px solid var(--border);
     }
 
-    /* Slightly Smaller Buttons with Rounded Edges */
-    .bigger-button {
-      font-size: 1.5em;
-      padding: 0.6em 1.5em;
-      border-radius: 15px;
+    /* Tracker tables */
+    .tracker-table { width: 100%; border-collapse: collapse; }
+    .tracker-table th {
+      font-size: .7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .06em; color: var(--muted);
+      padding: 6px 12px 8px; border-bottom: 1px solid var(--border);
     }
+    .tracker-table td {
+      padding: 11px 12px; border-bottom: 1px solid var(--border);
+      font-size: .875rem; vertical-align: middle;
+    }
+    .tracker-table tr:last-child td { border-bottom: none; }
+    .tracker-table tr:hover td { background: #fafbff; }
+    .tracker-table .date-col   { color: var(--muted); font-size: .82rem; }
+    .tracker-table .week-range { font-weight: 600; font-size: .85rem; }
+    .tracker-table .check-col  { text-align: center; }
+
+    input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; }
+    .check-nof    { accent-color: var(--nof);    }
+    .check-med    { accent-color: var(--med);    }
+    .check-cardio { accent-color: var(--cardio); }
+
+    /* Save button */
+    .btn-save {
+      display: block; width: 100%; padding: 14px; border: none;
+      border-radius: var(--r-sm);
+      background: linear-gradient(135deg, var(--primary), var(--med));
+      color: #fff; font-family: inherit; font-size: .95rem; font-weight: 700;
+      letter-spacing: .02em; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(91,94,244,.35);
+      transition: opacity .15s, transform .15s;
+      margin-top: 20px;
+    }
+    .btn-save:hover  { opacity: .92; }
+    .btn-save:active { transform: scale(.98); }
+
+    /* Info cards grid */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 560px) { .info-grid { grid-template-columns: 1fr; } }
+
+    .info-card .card-body { padding: 16px; }
+
+    .pct-bar-wrap { margin: 10px 0 14px; }
+    .pct-bar-label {
+      display: flex; justify-content: space-between;
+      font-size: .75rem; color: var(--muted); margin-bottom: 5px;
+    }
+    .pct-bar-label span:last-child { font-weight: 700; color: var(--text); }
+    .pct-bar-track { height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .pct-bar-fill  { height: 100%; border-radius: 4px; transition: width .6s ease; }
+    .pct-bar-fill.nof    { background: linear-gradient(90deg, var(--nof),    var(--nof-2));    }
+    .pct-bar-fill.med    { background: linear-gradient(90deg, var(--med),    var(--med-2));    }
+    .pct-bar-fill.cardio { background: linear-gradient(90deg, var(--cardio), var(--cardio-2)); }
+
+    .stat-row {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 7px 0; border-bottom: 1px solid var(--border);
+      font-size: .78rem; gap: 8px;
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row .sl { color: var(--muted); flex-shrink: 0; }
+    .stat-row .sv { font-weight: 600; text-align: right; word-break: break-word; }
+
+    .failure-chip {
+      display: inline-block; background: #fff1f2; color: var(--danger);
+      border-radius: 6px; padding: 1px 7px; font-size: .7rem; font-weight: 600; margin: 1px;
+    }
+    .none-label { color: var(--nof); font-weight: 700; }
+
+    /* Charts */
+    .chart-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+    .chart-goal-label {
+      font-size: .85rem; font-weight: 700; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .chart-sub { font-size: .72rem; color: var(--muted); font-weight: 500; }
+
+    .bar-chart-wrap { position: relative; height: 160px; }
+
+    .pie-grid {
+      display: flex; flex-wrap: wrap; gap: 6px; justify-content: space-between;
+    }
+    .pie-item { flex: 1 1 calc(14.28% - 6px); min-width: 60px; text-align: center; }
+    .pie-wrap  { position: relative; height: 70px; }
+    .pie-day   {
+      font-size: .65rem; font-weight: 700; color: var(--muted);
+      margin-top: 4px; text-transform: uppercase; letter-spacing: .04em;
+    }
+
+    /* Click analysis */
+    .click-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .click-stat { background: var(--bg); border-radius: var(--r-sm); padding: 14px; text-align: center; }
+    .click-stat .cs-val { font-size: 1.6rem; font-weight: 800; letter-spacing: -.5px; line-height: 1; }
+    .click-stat .cs-val.primary { color: var(--primary); }
+    .click-stat .cs-val.nof-c   { color: var(--nof); }
+    .click-stat .cs-label { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-top: 4px; }
+    .cs-target { font-size: .7rem; color: var(--muted); margin-top: 2px; }
+
+    /* aMCC */
+    .amcc-card {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      border-radius: var(--r); padding: 24px 20px; margin-bottom: 20px;
+      box-shadow: var(--shadow-lg);
+    }
+    .amcc-card h2 { font-size: 1rem; font-weight: 800; color: #fff; letter-spacing: -.3px; }
+    .amcc-card p  { font-size: .8rem; color: rgba(255,255,255,.55); margin: 4px 0 20px; }
+    .amcc-btns    { display: flex; gap: 10px; justify-content: center; }
+    .btn-amcc {
+      flex: 1; max-width: 100px; padding: 14px 0; border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--nof), #047857);
+      color: #fff; font-family: inherit; font-size: 1.25rem; font-weight: 800;
+      cursor: pointer; box-shadow: 0 4px 12px rgba(5,150,105,.4);
+      transition: transform .15s, opacity .15s;
+    }
+    .btn-amcc:hover  { opacity: .9; }
+    .btn-amcc:active { transform: scale(.96); }
   </style>
 </head>
-<body class="container mt-5">
+<body>
 
-  <!-- Percentages with Bootstrap Badges at the top -->
-  <div class="goal-achievement">
-    {% for goal in goals %}
-      <p>{{ goal.replace('_', ' ').title() }}:
-        {% if goal == 'meditation' %}
-          <span class="badge badge-custom badge-meditation">{{ percentages[goal]|round(2) }}%</span>
-        {% else %}
-          <span class="badge badge-primary badge-custom">{{ percentages[goal]|round(2) }}%</span>
-        {% endif %}
-<p class="text-center">
-            <strong>Current Streak:</strong> {{ current_streaks[goal] }} day(s)
-          </p>
-      </p>
-    {% endfor %}
+  <div class="header">
+    <div class="wrapper">
+      <h1>🎯 Goal Tracker</h1>
+      <p>Track habits · Build momentum · Stay consistent</p>
+    </div>
   </div>
 
-  <!-- Click Analysis: show sum and average, hide the daily table -->
-  <div class="row mb-5">
-    <div class="col-12">
-      <h2 class="my-4 text-center">Click Analysis</h2>
-<div class="goal-achievement">
-  <p>
-    <strong>Total:</strong>
-    <span class="badge badge-custom badge-meditation">{{ total_sum }}</span>
-    <span class="badge badge-custom badge-meditation">/28.5</span>
-  </p>
-  <p>
-    <strong>Average:</strong>
-    <span class="badge badge-custom badge-primary">{{ average_sum|round(2) }}</span>
-  </p>
-</div>
+  <div class="wrapper">
 
-  <!-- Ticking and Updating Section -->
-  <!-- Removed onsubmit="setScrollFlag()" -->
-  <form method="POST">
-    <div class="d-flex justify-content-center mb-5">
-      <button type="submit" class="btn btn-primary btn-lg">Update</button>
-    </div>
-    <div class="table-responsive mb-5">
-      <table class="table table-bordered table-striped">
-        <thead class="thead-light">
-          <tr>
-            <th>Date</th>
-            {% for goal in goals %}
-              <th>{{ goal.replace('_', ' ').title() }}</th>
-            {% endfor %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for date in last_seven_days | reverse %}
-          <tr>
-            <td>{{ date }}</td>
-            {% for goal in goals %}
-            <td class="text-center">
-              <input
-                type="checkbox"
-                name="{{ date }}_{{ goal }}"
-                {% if streak_data[goal][date] %}checked{% endif %}
-              />
-            </td>
-            {% endfor %}
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </form>
-
-  <!-- Goal Information Cards -->
-  <div class="row">
-    {% for goal in goals %}
-    <div class="col-md-6 mb-4">
-      <div class="card">
-        <div class="card-body">
-          <h4 class="card-title text-center">{{ goal.replace('_', ' ').title() }}</h4>
-          <p class="text-center">
-            {% if goal == 'meditation' %}
-              <span class="badge badge-custom badge-meditation">{{ percentages[goal]|round(2) }}%</span>
-            {% else %}
-              <span class="badge badge-primary badge-custom">{{ percentages[goal]|round(2) }}%</span>
-            {% endif %}
-          </p>
-          <p class="text-center">
-            <strong>Current Streak:</strong> {{ current_streaks[goal] }} day(s)
-          </p>
-          <p class="text-center">
-            <strong>Longest Streak:</strong> {{ longest_streaks[goal] }} day(s)
-          </p>
-          <p class="text-center">
-            <strong>Second Longest Streak:</strong> {{ second_longest_streaks[goal] }} day(s)
-          </p>
-          <p class="text-center">
-            <strong>Last Failures:</strong>
-            {% if last_failures[goal]|length == 0 %}
-              None!
-            {% else %}
-              {{ last_failures[goal]|join(', ') }}
-            {% endif %}
-          </p>
+    <!-- Quick Stats: 3 columns -->
+    <div class="stats-grid">
+      {% for goal in goals %}
+      <div class="stat-card
+        {% if goal == 'no_f' %}nof
+        {% elif goal == 'meditation' %}med
+        {% else %}cardio{% endif %}">
+        <div class="sc-pct">{{ percentages[goal]|round(1) }}%</div>
+        <div class="sc-name">{{ goal_display_names[goal] }}</div>
+        <div class="sc-streak">
+          🔥 {{ current_streaks[goal] }}
+          {% if goal in weekly_goals %}wk{% else %}day{% endif %} streak
         </div>
       </div>
+      {% endfor %}
     </div>
-    {% endfor %}
-  </div>
 
-  <!-- Pie Charts at the Bottom -->
-  <h2 class="mb-4 text-center">Weekly Completion Charts</h2>
-  <div class="row">
-    {% for goal in goals %}
-    <div class="col-12 mb-4">
-      <h3 class="text-center">{{ goal.replace('_', ' ').title() }}</h3>
-      <div class="row">
-        {% for day_data in weekly_chart_data[goal] %}
-        <div class="col-6 col-md-4 text-center mb-3">
-          <div class="chart-container" style="height: 150px; width: 100%;">
-            <canvas id="chart-{{ goal }}-{{ day_data.day }}"></canvas>
+    <!-- Progress Form -->
+    <div class="card">
+      <div class="card-body">
+        <div class="section-label">Log Progress</div>
+        <form method="POST">
+
+          <!-- Daily goals (No F + Meditation) -->
+          {% for goal in daily_goals %}
+          <div class="goal-section">
+            <div class="goal-tag
+              {% if goal == 'no_f' %}nof{% else %}med{% endif %}">
+              <span class="dot"></span>
+              {{ goal_display_names[goal] }} — Daily
+            </div>
+            <table class="tracker-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th class="check-col">Done</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for date in last_seven_days | reverse %}
+                <tr>
+                  <td class="date-col">{{ date }}</td>
+                  <td class="check-col">
+                    <input type="checkbox"
+                      class="{% if goal == 'no_f' %}check-nof{% else %}check-med{% endif %}"
+                      name="{{ date }}_{{ goal }}"
+                      {% if streak_data[goal][date] %}checked{% endif %} />
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
           </div>
-          <p>{{ day_data.day }}</p>
+          {% endfor %}
+
+          <!-- Weekly goals (Weekly Cardio) -->
+          {% for goal in weekly_goals %}
+          <div class="goal-section">
+            <div class="goal-tag cardio">
+              <span class="dot"></span>
+              {{ goal_display_names[goal] }} — Weekly
+            </div>
+            <table class="tracker-table">
+              <thead>
+                <tr>
+                  <th>Week</th>
+                  <th class="check-col">Achieved</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for week in last_four_weeks | reverse %}
+                <tr>
+                  <td class="week-range">{{ week.label }}</td>
+                  <td class="check-col">
+                    <input type="checkbox" class="check-cardio"
+                      name="{{ week.key }}_{{ goal }}"
+                      {% if streak_data[goal][week.key] %}checked{% endif %} />
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% endfor %}
+
+          <button type="submit" class="btn-save">✓ Save Progress</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Goal Info Cards: 3 columns -->
+    <div class="section-label" style="margin-bottom:12px;">Goal Stats</div>
+    <div class="info-grid">
+      {% for goal in goals %}
+      <div class="card info-card" style="margin-bottom:0;">
+        <div class="card-body">
+          <div class="goal-tag
+            {% if goal == 'no_f' %}nof
+            {% elif goal == 'meditation' %}med
+            {% else %}cardio{% endif %}"
+            style="margin-bottom:8px;">
+            <span class="dot"></span>{{ goal_display_names[goal] }}
+          </div>
+
+          <div class="pct-bar-wrap">
+            <div class="pct-bar-label">
+              <span>Done</span>
+              <span>{{ percentages[goal]|round(1) }}%</span>
+            </div>
+            <div class="pct-bar-track">
+              <div class="pct-bar-fill
+                {% if goal == 'no_f' %}nof
+                {% elif goal == 'meditation' %}med
+                {% else %}cardio{% endif %}"
+                style="width:{{ [percentages[goal]|round(1), 100]|min }}%"></div>
+            </div>
+          </div>
+
+          <div class="stat-row">
+            <span class="sl">Current</span>
+            <span class="sv">🔥 {{ current_streaks[goal] }}
+              {% if goal in weekly_goals %}wk{% else %}d{% endif %}
+            </span>
+          </div>
+          <div class="stat-row">
+            <span class="sl">Longest</span>
+            <span class="sv">{{ longest_streaks[goal] }}
+              {% if goal in weekly_goals %}wk{% else %}d{% endif %}
+            </span>
+          </div>
+          <div class="stat-row">
+            <span class="sl">2nd best</span>
+            <span class="sv">{{ second_longest_streaks[goal] }}
+              {% if goal in weekly_goals %}wk{% else %}d{% endif %}
+            </span>
+          </div>
+          <div class="stat-row">
+            <span class="sl">Failures</span>
+            <span class="sv">
+              {% if last_failures[goal]|length == 0 %}
+                <span class="none-label">None 🎉</span>
+              {% else %}
+                {% for f in last_failures[goal] %}
+                  <span class="failure-chip">{{ f }}</span>
+                {% endfor %}
+              {% endif %}
+            </span>
+          </div>
         </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Charts -->
+    <div class="card">
+      <div class="card-body">
+        <div class="section-label">Completion Charts</div>
+
+        {% for goal in goals %}
+        <div>
+          <div class="chart-goal-label">
+            <div class="goal-tag
+              {% if goal == 'no_f' %}nof
+              {% elif goal == 'meditation' %}med
+              {% else %}cardio{% endif %}"
+              style="margin-bottom:0;">
+              <span class="dot"></span>{{ goal_display_names[goal] }}
+            </div>
+            <span class="chart-sub">
+              {% if goal in weekly_goals %}Last 8 weeks{% else %}By day of week{% endif %}
+            </span>
+          </div>
+
+          {% if goal in weekly_goals %}
+          <div class="bar-chart-wrap">
+            <canvas id="chart-weekly-{{ goal }}"></canvas>
+          </div>
+          {% else %}
+          <div class="pie-grid">
+            {% for day_data in weekly_chart_data[goal] %}
+            <div class="pie-item">
+              <div class="pie-wrap">
+                <canvas id="chart-{{ goal }}-{{ day_data.day }}"></canvas>
+              </div>
+              <div class="pie-day">{{ day_data.day[:3] }}</div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        {% if not loop.last %}<hr class="chart-divider">{% endif %}
         {% endfor %}
       </div>
     </div>
-    {% endfor %}
-  </div>
 
-  <!-- NEW SECTION: Grow the anterior Mid Cingulate Cortex -->
-  <h2 class="text-center mb-4">Grow the anterior Mid Cingulate Cortex</h2>
-  <div class="d-flex justify-content-center mb-5">
-    <!-- Removed onsubmit="setScrollFlag()" -->
-    <form action="{{ url_for('increment') }}" method="POST" style="display: inline-block; margin-right: 10px;">
-      <input type="hidden" name="value" value="1">
-      <button type="submit" class="btn btn-success bigger-button celebration-button">1x</button>
-    </form>
-    <form action="{{ url_for('increment') }}" method="POST" style="display: inline-block; margin-right: 10px;">
-      <input type="hidden" name="value" value="2">
-      <button type="submit" class="btn btn-success bigger-button celebration-button">2x</button>
-    </form>
-    <form action="{{ url_for('increment') }}" method="POST" style="display: inline-block;">
-      <input type="hidden" name="value" value="0.5">
-      <button type="submit" class="btn btn-success bigger-button celebration-button">0.5x</button>
-    </form>
-  </div>
-
-      <!-- Hidden daily sums table -->
-      <div style="display:none;">
-        <div class="table-responsive">
-          <table class="table table-bordered table-striped">
-            <thead class="thead-light">
-              <tr>
-                <th>Date</th>
-                <th>Sum</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for date_str, s in click_sums.items() %}
-              <tr>
-                <td>{{ date_str }}</td>
-                <td>{{ s }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+    <!-- Click Analysis -->
+    <div class="card">
+      <div class="card-body">
+        <div class="section-label">Click Analysis</div>
+        <div class="click-grid">
+          <div class="click-stat">
+            <div class="cs-val nof-c">{{ total_sum }}</div>
+            <div class="cs-label">Total</div>
+            <div class="cs-target">target: 28.5</div>
+          </div>
+          <div class="click-stat">
+            <div class="cs-val primary">{{ average_sum|round(2) }}</div>
+            <div class="cs-label">Monthly Avg</div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Bootstrap JS and dependencies (Optional) -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- aMCC -->
+    <div class="amcc-card">
+      <h2>🧠 Grow the anterior Mid Cingulate Cortex</h2>
+      <p>Do the hard thing. Every rep counts.</p>
+      <div class="amcc-btns">
+        <form action="{{ url_for('increment') }}" method="POST">
+          <input type="hidden" name="value" value="0.5">
+          <button type="submit" class="btn-amcc celebration-button">0.5×</button>
+        </form>
+        <form action="{{ url_for('increment') }}" method="POST">
+          <input type="hidden" name="value" value="1">
+          <button type="submit" class="btn-amcc celebration-button">1×</button>
+        </form>
+        <form action="{{ url_for('increment') }}" method="POST">
+          <input type="hidden" name="value" value="2">
+          <button type="submit" class="btn-amcc celebration-button">2×</button>
+        </form>
+      </div>
+    </div>
 
-  <!-- Chart.js Library -->
+    <!-- Hidden click sums (preserved) -->
+    <div style="display:none;">
+      {% for date_str, s in click_sums.items() %}
+        <span>{{ date_str }}:{{ s }}</span>
+      {% endfor %}
+    </div>
+
+  </div><!-- /.wrapper -->
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Confetti library (for celebratory animation) -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-
   <script>
-    // Generate Pie Charts for each day of the week
-    const weeklyChartData = {{ weekly_chart_data|tojson }};
-    const goals = {{ goals|tojson }};
+    const weeklyChartData = {{ weekly_chart_data | tojson }};
+    const weeklyGoals     = {{ weekly_goals      | tojson }};
+    const dailyGoals      = {{ daily_goals       | tojson }};
 
-    goals.forEach(function(goal) {
-      const goalData = weeklyChartData[goal];
-      goalData.forEach(function(dayData) {
-        const ctx = document.getElementById('chart-' + goal + '-' + dayData.day).getContext('2d');
-        new Chart(ctx, {
+    // Bar charts for weekly goals
+    weeklyGoals.forEach(goal => {
+      const raw    = weeklyChartData[goal];
+      const canvas = document.getElementById('chart-weekly-' + goal);
+      if (!canvas) return;
+
+      new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: raw.map(d => d.day),
+          datasets: [{
+            data: raw.map(d =>
+              d.achieved     === 1 ? 1    :
+              d.not_achieved === 1 ? 0.18 : 0.08
+            ),
+            backgroundColor: raw.map(d =>
+              d.achieved     === 1 ? '#0ea5e9' :
+              d.not_achieved === 1 ? '#fca5a5' : '#e2e8f0'
+            ),
+            borderRadius: 8,
+            borderSkipped: false,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { display: false, min: 0, max: 1.25 },
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 10, family: 'Inter' }, color: '#6b7a99', maxRotation: 30 }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => {
+                  const d = raw[ctx.dataIndex];
+                  if (d.achieved     === 1) return '✓ Achieved';
+                  if (d.not_achieved === 1) return '✗ Not achieved';
+                  return '— No data yet';
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+
+    // Pie charts for daily goals
+    const PIE_COLORS = {
+      no_f:       ['#059669', '#e4e9f2'],
+      meditation: ['#7c3aed', '#e4e9f2'],
+    };
+
+    dailyGoals.forEach(goal => {
+      const colors = PIE_COLORS[goal] || ['#5b5ef4', '#e4e9f2'];
+      weeklyChartData[goal].forEach(dayData => {
+        const canvas = document.getElementById('chart-' + goal + '-' + dayData.day);
+        if (!canvas) return;
+        new Chart(canvas.getContext('2d'), {
           type: 'pie',
           data: {
             labels: ['Achieved', 'Not Achieved'],
             datasets: [{
-              data: [dayData['achieved'], dayData['not_achieved']],
-              backgroundColor: [
-                goal === 'meditation' ? '#28a745' : '#007bff',
-                '#dddddd'
-              ],
-              borderColor: '#ffffff',
+              data: [dayData.achieved, dayData.not_achieved],
+              backgroundColor: colors,
+              borderColor: '#fff',
               borderWidth: 2
             }]
           },
@@ -254,25 +583,13 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: {
-                display: false
-              },
+              legend: { display: false },
               tooltip: {
                 callbacks: {
-                  label: function(context) {
-                    let label = context.label || '';
-                    if (label) {
-                      label += ': ';
-                    }
-                    if (context.parsed !== null) {
-                      const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                      const value = context.parsed;
-                      const percentage = total > 0
-                        ? (value / total * 100).toFixed(2)
-                        : 0;
-                      label += percentage + '%';
-                    }
-                    return label;
+                  label: ctx => {
+                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                    const pct = total > 0 ? (ctx.parsed / total * 100).toFixed(1) : '0.0';
+                    return ctx.label + ': ' + pct + '%';
                   }
                 }
               }
@@ -282,45 +599,28 @@
       });
     });
 
-    // Confetti code (3-second burst before submission)
-    const celebrationButtons = document.querySelectorAll('.celebration-button');
+    // Confetti for aMCC buttons
     function showConfetti() {
-      const duration = 3000;
-      const animationEnd = Date.now() + duration;
+      const end = Date.now() + 3000;
       const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
-
-      function randomInRange(min, max) {
-        return Math.random() * (max - min) + min;
-      }
-
-      const interval = setInterval(() => {
-        const timeLeft = animationEnd - Date.now();
-        if (timeLeft <= 0) {
-          return clearInterval(interval);
-        }
-        const particleCount = 50 * (timeLeft / duration);
+      const rand = (a, b) => Math.random() * (b - a) + a;
+      const iv = setInterval(() => {
+        const left = end - Date.now();
+        if (left <= 0) return clearInterval(iv);
         confetti(Object.assign({}, defaults, {
-          particleCount,
-          origin: {
-            x: randomInRange(0.1, 0.9),
-            y: Math.random() - 0.2
-          }
+          particleCount: 50 * (left / 3000),
+          origin: { x: rand(0.1, 0.9), y: Math.random() - 0.2 }
         }));
       }, 250);
     }
-
-    function handleButtonClick(evt) {
-      evt.preventDefault(); // stop immediate form submission
-      showConfetti();       // start confetti
-      // Wait 3 seconds, then submit form
-      setTimeout(() => {
-        evt.target.closest('form').submit();
-      }, 3000);
+    function handleAmcc(evt) {
+      evt.preventDefault();
+      showConfetti();
+      setTimeout(() => evt.target.closest('form').submit(), 3000);
     }
-
-    celebrationButtons.forEach(button => {
-      button.addEventListener('click', handleButtonClick);
-      button.addEventListener('touchstart', handleButtonClick);
+    document.querySelectorAll('.celebration-button').forEach(btn => {
+      btn.addEventListener('click',      handleAmcc);
+      btn.addEventListener('touchstart', handleAmcc, { passive: false });
     });
   </script>
 </body>
