@@ -1,501 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
   <title>Goal Tracker</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:         #f0f4ff;
-      --card:       #ffffff;
-      --border:     #e4e9f2;
-      --text:       #1a1f36;
-      --muted:      #6b7a99;
-      --primary:    #5b5ef4;
-      --nof:        #059669;
-      --nof-2:      #34d399;
-      --med:        #7c3aed;
-      --med-2:      #a78bfa;
-      --cardio:     #0ea5e9;
-      --cardio-2:   #38bdf8;
-      --danger:     #ef4444;
-      --r:          16px;
-      --r-sm:       10px;
-      --shadow:     0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
-      --shadow-lg:  0 10px 30px rgba(0,0,0,.10),0 4px 8px rgba(0,0,0,.05);
-    }
-
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding-bottom: 48px;
-    }
-
-    /* Header */
-    .header {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--med) 100%);
-      padding: 28px 20px 60px;
-      position: relative;
-      overflow: hidden;
-    }
-    .header::after {
-      content: '';
-      position: absolute;
-      bottom: -30px; left: 0; right: 0;
-      height: 60px;
-      background: var(--bg);
-      border-radius: 50% 50% 0 0 / 30px 30px 0 0;
-    }
-    .header h1 { font-size: 1.75rem; font-weight: 800; color: #fff; letter-spacing: -.5px; }
-    .header p  { font-size: .875rem; color: rgba(255,255,255,.75); margin-top: 4px; }
-
-    /* Wrapper */
-    .wrapper { max-width: 680px; margin: 0 auto; padding: 0 16px; }
-
-    /* Cards */
-    .card { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 20px; }
-    .card-body { padding: 20px; }
-
-    /* Section label */
-    .section-label {
-      font-size: .7rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .08em; color: var(--muted); margin-bottom: 14px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .section-label::before {
-      content: ''; display: block; width: 3px; height: 14px; border-radius: 2px;
-      background: linear-gradient(180deg, var(--primary), var(--med));
-    }
-
-    /* Quick stat grid — 3 columns */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: -32px;
-      margin-bottom: 20px;
-    }
-    @media (max-width: 400px) { .stats-grid { grid-template-columns: repeat(3,1fr); gap: 8px; } }
-
-    .stat-card {
-      border-radius: var(--r);
-      padding: 14px 12px;
-      color: #fff;
-      box-shadow: var(--shadow-lg);
-      position: relative;
-      overflow: hidden;
-    }
-    .stat-card::before {
-      content: ''; position: absolute; top: -18px; right: -18px;
-      width: 64px; height: 64px; border-radius: 50%;
-      background: rgba(255,255,255,.13);
-    }
-    .stat-card.nof     { background: linear-gradient(135deg, var(--nof),    var(--nof-2));    }
-    .stat-card.med     { background: linear-gradient(135deg, var(--med),    var(--med-2));    }
-    .stat-card.cardio  { background: linear-gradient(135deg, var(--cardio), var(--cardio-2)); }
-    .stat-card .sc-pct    { font-size: 1.7rem; font-weight: 800; line-height: 1; letter-spacing: -1px; }
-    .stat-card .sc-name   { font-size: .72rem; font-weight: 600; opacity: .85; margin-top: 2px; }
-    .stat-card .sc-streak { font-size: .7rem; margin-top: 7px; opacity: .8; }
-
-    /* Goal tags */
-    .goal-tag {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 12px; border-radius: 50px;
-      font-size: .75rem; font-weight: 700; margin-bottom: 12px;
-    }
-    .goal-tag .dot { width: 6px; height: 6px; border-radius: 50%; }
-    .goal-tag.nof    { background: #d1fae5; color: var(--nof);    }
-    .goal-tag.nof    .dot { background: var(--nof);    }
-    .goal-tag.med    { background: #ede9fe; color: var(--med);    }
-    .goal-tag.med    .dot { background: var(--med);    }
-    .goal-tag.cardio { background: #e0f2fe; color: var(--cardio); }
-    .goal-tag.cardio .dot { background: var(--cardio); }
-
-    /* Goal sections inside the form */
-    .goal-section + .goal-section {
-      margin-top: 20px; padding-top: 20px;
-      border-top: 1px solid var(--border);
-    }
-
-    /* Tracker tables */
-    .tracker-table { width: 100%; border-collapse: collapse; }
-    .tracker-table th {
-      font-size: .7rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .06em; color: var(--muted);
-      padding: 6px 12px 8px; border-bottom: 1px solid var(--border);
-    }
-    .tracker-table td {
-      padding: 11px 12px; border-bottom: 1px solid var(--border);
-      font-size: .875rem; vertical-align: middle;
-    }
-    .tracker-table tr:last-child td { border-bottom: none; }
-    .tracker-table tr:hover td { background: #fafbff; }
-    .tracker-table .date-col   { color: var(--muted); font-size: .82rem; }
-    .tracker-table .week-range { font-weight: 600; font-size: .85rem; }
-    .tracker-table .check-col  { text-align: center; }
-
-    input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; }
-    .check-nof    { accent-color: var(--nof);    }
-    .check-med    { accent-color: var(--med);    }
-    .check-cardio { accent-color: var(--cardio); }
-
-    /* Save button */
-    .btn-save {
-      display: block; width: 100%; padding: 14px; border: none;
-      border-radius: var(--r-sm);
-      background: linear-gradient(135deg, var(--primary), var(--med));
-      color: #fff; font-family: inherit; font-size: .95rem; font-weight: 700;
-      letter-spacing: .02em; cursor: pointer;
-      box-shadow: 0 4px 14px rgba(91,94,244,.35);
-      transition: opacity .15s, transform .15s;
-      margin-top: 20px;
-    }
-    .btn-save:hover  { opacity: .92; }
-    .btn-save:active { transform: scale(.98); }
-
-    /* Info cards grid */
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    @media (max-width: 560px) { .info-grid { grid-template-columns: 1fr; } }
-
-    .info-card .card-body { padding: 16px; }
-
-    .pct-bar-wrap { margin: 10px 0 14px; }
-    .pct-bar-label {
-      display: flex; justify-content: space-between;
-      font-size: .75rem; color: var(--muted); margin-bottom: 5px;
-    }
-    .pct-bar-label span:last-child { font-weight: 700; color: var(--text); }
-    .pct-bar-track { height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; }
-    .pct-bar-fill  { height: 100%; border-radius: 4px; transition: width .6s ease; }
-    .pct-bar-fill.nof    { background: linear-gradient(90deg, var(--nof),    var(--nof-2));    }
-    .pct-bar-fill.med    { background: linear-gradient(90deg, var(--med),    var(--med-2));    }
-    .pct-bar-fill.cardio { background: linear-gradient(90deg, var(--cardio), var(--cardio-2)); }
-
-    .stat-row {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      padding: 7px 0; border-bottom: 1px solid var(--border);
-      font-size: .78rem; gap: 8px;
-    }
-    .stat-row:last-child { border-bottom: none; }
-    .stat-row .sl { color: var(--muted); flex-shrink: 0; }
-    .stat-row .sv { font-weight: 600; text-align: right; word-break: break-word; }
-
-    .failure-chip {
-      display: inline-block; background: #fff1f2; color: var(--danger);
-      border-radius: 6px; padding: 1px 7px; font-size: .7rem; font-weight: 600; margin: 1px;
-    }
-    .none-label { color: var(--nof); font-weight: 700; }
-
-    /* Charts */
-    .chart-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
-    .chart-goal-label {
-      font-size: .85rem; font-weight: 700; margin-bottom: 12px;
-      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    }
-    .chart-sub { font-size: .72rem; color: var(--muted); font-weight: 500; }
-
-    .bar-chart-wrap { position: relative; height: 160px; }
-
-    .pie-grid {
-      display: flex; flex-wrap: wrap; gap: 6px; justify-content: space-between;
-    }
-    .pie-item { flex: 1 1 calc(14.28% - 6px); min-width: 60px; text-align: center; }
-    .pie-wrap  { position: relative; height: 70px; }
-    .pie-day   {
-      font-size: .65rem; font-weight: 700; color: var(--muted);
-      margin-top: 4px; text-transform: uppercase; letter-spacing: .04em;
-    }
-
-    /* Click analysis */
-    .click-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .click-stat { background: var(--bg); border-radius: var(--r-sm); padding: 14px; text-align: center; }
-    .click-stat .cs-val { font-size: 1.6rem; font-weight: 800; letter-spacing: -.5px; line-height: 1; }
-    .click-stat .cs-val.primary { color: var(--primary); }
-    .click-stat .cs-val.nof-c   { color: var(--nof); }
-    .click-stat .cs-label { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-top: 4px; }
-    .cs-target { font-size: .7rem; color: var(--muted); margin-top: 2px; }
-
-    /* aMCC */
-    .amcc-card {
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      border-radius: var(--r); padding: 24px 20px; margin-bottom: 20px;
-      box-shadow: var(--shadow-lg);
-    }
-    .amcc-card h2 { font-size: 1rem; font-weight: 800; color: #fff; letter-spacing: -.3px; }
-    .amcc-card p  { font-size: .8rem; color: rgba(255,255,255,.55); margin: 4px 0 20px; }
-    .amcc-btns    { display: flex; gap: 10px; justify-content: center; }
-    .btn-amcc {
-      flex: 1; max-width: 100px; padding: 14px 0; border: none;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--nof), #047857);
-      color: #fff; font-family: inherit; font-size: 1.25rem; font-weight: 800;
-      cursor: pointer; box-shadow: 0 4px 12px rgba(5,150,105,.4);
-      transition: transform .15s, opacity .15s;
-    }
-    .btn-amcc:hover  { opacity: .9; }
-    .btn-amcc:active { transform: scale(.96); }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style_tracker.css') }}"/>
 </head>
 <body>
 
+  <!-- Scroll progress -->
+  <div id="progress-bar"></div>
+
+  <!-- Fixed background layers -->
+  <div class="dot-grid"></div>
+  <div class="bg-orbs">
+    <div class="orb-pw" data-speed="0.07"><div class="bg-orb bg-orb-1"></div></div>
+    <div class="orb-pw" data-speed="-0.11"><div class="bg-orb bg-orb-2"></div></div>
+    <div class="orb-pw" data-speed="0.14"><div class="bg-orb bg-orb-3"></div></div>
+    <div class="orb-pw" data-speed="-0.06"><div class="bg-orb bg-orb-4"></div></div>
+    <div class="orb-pw" data-speed="0.09"><div class="bg-orb bg-orb-5"></div></div>
+  </div>
+  <div id="sparkle-layer"></div>
+
+  <!-- ═══ HEADER ═══════════════════════════════════════════════ -->
   <div class="header">
-    <div class="wrapper">
-      <h1>🎯 Goal Tracker</h1>
-      <p>Track habits · Build momentum · Stay consistent</p>
+    <div class="hdr-orb hdr-orb-1"></div>
+    <div class="hdr-orb hdr-orb-2"></div>
+    <div class="hdr-orb hdr-orb-3"></div>
+    <div class="hdr-orb hdr-orb-4"></div>
+    <div class="header-inner">
+
+      <div class="header-left">
+        <div class="header-title-row">
+          <div class="header-badge">
+            <div class="badge-ring"></div>
+            <span class="badge-icon">🎯</span>
+          </div>
+          <h1>Goal Tracker</h1>
+        </div>
+        <p>Track habits · Build streaks · Stay consistent</p>
+      </div>
+
+      <!-- aMCC ring -->
+      {% set fill_ratio = [total_sum / 28.5, 1.0] | min %}
+      {% set dashoff    = ((1 - fill_ratio) * 138.2) | round(2) %}
+      <div class="header-amcc">
+        <div class="amcc-ring-wrap">
+          <div class="ring-glow"></div>
+          <svg class="amcc-ring-svg" viewBox="0 0 68 68">
+            <circle class="ring-track" cx="34" cy="34" r="22" fill="none" stroke-width="5"/>
+            <circle class="ring-fill"  cx="34" cy="34" r="22" fill="none" stroke-width="5"
+              stroke-dasharray="138.2" stroke-dashoffset="{{ dashoff }}"/>
+          </svg>
+          <div class="amcc-ring-center">
+            <span class="arc-val">{{ total_sum | round(1) }}</span>
+            <span class="arc-lbl">aMCC</span>
+          </div>
+        </div>
+        <div class="amcc-chips">
+          <div class="amcc-chip">
+            <span class="chip-val">{{ total_sum }}<span style="font-size:.6rem;opacity:.5;">/28.5</span></span>
+            <span class="chip-lbl">Total</span>
+          </div>
+          <div class="amcc-chip">
+            <span class="chip-val">{{ average_sum | round(2) }}</span>
+            <span class="chip-lbl">Avg / mo</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <div class="wrapper">
 
-    <!-- Quick Stats: 3 columns -->
+    <!-- ═══ STAT CARDS ════════════════════════════════════════ -->
     <div class="stats-grid">
       {% for goal in goals %}
-      <div class="stat-card
-        {% if goal == 'no_f' %}nof
-        {% elif goal == 'meditation' %}med
-        {% else %}cardio{% endif %}">
-        <div class="sc-pct">{{ percentages[goal]|round(1) }}%</div>
-        <div class="sc-name">{{ goal_display_names[goal] }}</div>
-        <div class="sc-streak">
-          🔥 {{ current_streaks[goal] }}
-          {% if goal in weekly_goals %}wk{% else %}day{% endif %} streak
+      <div class="sc-shell-wrap">
+        <div class="sc-shell {% if goal=='no_f' %}nof{% elif goal=='meditation' %}med{% else %}cardio{% endif %}">
+          <div class="stat-card {% if goal=='no_f' %}nof{% elif goal=='meditation' %}med{% else %}cardio{% endif %}">
+            <div class="sc-bg1"></div>
+            <div class="sc-bg2"></div>
+            <div class="sc-shimmer"></div>
+            <div class="sc-pct" data-target="{{ percentages[goal] | round(1) }}">0%</div>
+            <div class="sc-name">{{ goal_display_names[goal] }}</div>
+            <div class="sc-streak">
+              <span class="fire">🔥</span>
+              {{ current_streaks[goal] }}{% if goal in weekly_goals %}wk{% else %}d{% endif %}
+            </div>
+          </div>
         </div>
       </div>
       {% endfor %}
     </div>
 
-    <!-- Progress Form -->
-    <div class="card">
-      <div class="card-body">
-        <div class="section-label">Log Progress</div>
-        <form method="POST">
+    <!-- ═══ FORM CARD ════════════════════════════════════════ -->
+    <div class="bob-wrap card-float reveal">
+      <div class="spin-shell ss-main">
+        <div class="ss-inner glass">
+          <div class="section-label">
+            <div class="ping-dot pd-pri"><span></span></div>Log Progress
+          </div>
+          <form method="POST">
 
-          <!-- Daily goals (No F + Meditation) -->
-          {% for goal in daily_goals %}
-          <div class="goal-section">
-            <div class="goal-tag
-              {% if goal == 'no_f' %}nof{% else %}med{% endif %}">
-              <span class="dot"></span>
-              {{ goal_display_names[goal] }} — Daily
-            </div>
-            <table class="tracker-table">
-              <thead>
-                <tr>
+            <!-- No F + Meditation: side by side daily -->
+            <div class="goal-section">
+              <div class="daily-header">
+                <div class="goal-tag nof"><span class="dot"></span>No F</div>
+                <div class="goal-tag med"><span class="dot"></span>Meditation</div>
+                <span class="sep">— Daily</span>
+              </div>
+              <table class="tracker-table">
+                <thead><tr>
                   <th>Date</th>
-                  <th class="check-col">Done</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for date in last_seven_days | reverse %}
-                <tr>
-                  <td class="date-col">{{ date }}</td>
-                  <td class="check-col">
-                    <input type="checkbox"
-                      class="{% if goal == 'no_f' %}check-nof{% else %}check-med{% endif %}"
-                      name="{{ date }}_{{ goal }}"
-                      {% if streak_data[goal][date] %}checked{% endif %} />
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          {% endfor %}
-
-          <!-- Weekly goals (Weekly Cardio) -->
-          {% for goal in weekly_goals %}
-          <div class="goal-section">
-            <div class="goal-tag cardio">
-              <span class="dot"></span>
-              {{ goal_display_names[goal] }} — Weekly
+                  <th class="check-col"><div class="th-goal"><span class="th-dot nof"></span>No F</div></th>
+                  <th class="check-col"><div class="th-goal"><span class="th-dot med"></span>Med</div></th>
+                </tr></thead>
+                <tbody>
+                  {% for date in last_seven_days | reverse %}
+                  <tr>
+                    <td class="date-col">{{ date }}</td>
+                    <td class="check-col">
+                      <input type="checkbox" class="check-nof"
+                        name="{{ date }}_no_f"
+                        {% if streak_data['no_f'][date] %}checked{% endif %}/>
+                    </td>
+                    <td class="check-col">
+                      <input type="checkbox" class="check-med"
+                        name="{{ date }}_meditation"
+                        {% if streak_data['meditation'][date] %}checked{% endif %}/>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
-            <table class="tracker-table">
-              <thead>
-                <tr>
-                  <th>Week</th>
-                  <th class="check-col">Achieved</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for week in last_four_weeks | reverse %}
-                <tr>
-                  <td class="week-range">{{ week.label }}</td>
-                  <td class="check-col">
-                    <input type="checkbox" class="check-cardio"
-                      name="{{ week.key }}_{{ goal }}"
-                      {% if streak_data[goal][week.key] %}checked{% endif %} />
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          {% endfor %}
 
-          <button type="submit" class="btn-save">✓ Save Progress</button>
-        </form>
+            <!-- Weekly Cardio -->
+            {% for goal in weekly_goals %}
+            <div class="goal-section">
+              <div class="goal-tag cardio" style="margin-bottom:13px;">
+                <span class="dot"></span>{{ goal_display_names[goal] }} — Weekly
+              </div>
+              <table class="tracker-table">
+                <thead><tr>
+                  <th>Week</th>
+                  <th class="check-col"><div class="th-goal"><span class="th-dot cardio"></span>Achieved</div></th>
+                </tr></thead>
+                <tbody>
+                  {% for week in last_four_weeks | reverse %}
+                  <tr>
+                    <td class="week-range">{{ week.label }}</td>
+                    <td class="check-col">
+                      <input type="checkbox" class="check-cardio"
+                        name="{{ week.key }}_{{ goal }}"
+                        {% if streak_data[goal][week.key] %}checked{% endif %}/>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn-save">
+              <div class="btn-shimmer"></div>
+              <span class="btn-inner">✓ Save Progress <span class="btn-arrow">→</span></span>
+            </button>
+          </form>
+        </div>
       </div>
     </div>
 
-    <!-- Goal Info Cards: 3 columns -->
-    <div class="section-label" style="margin-bottom:12px;">Goal Stats</div>
+    <!-- ═══ GOAL STATS ════════════════════════════════════════ -->
+    <div class="section-label" style="margin-bottom:14px;">
+      <div class="ping-dot pd-nof"><span></span></div>Goal Stats
+    </div>
     <div class="info-grid">
       {% for goal in goals %}
-      <div class="card info-card" style="margin-bottom:0;">
-        <div class="card-body">
-          <div class="goal-tag
-            {% if goal == 'no_f' %}nof
-            {% elif goal == 'meditation' %}med
-            {% else %}cardio{% endif %}"
-            style="margin-bottom:8px;">
+      <div class="info-bob info-shell {% if goal=='no_f' %}nof{% elif goal=='meditation' %}med{% else %}cardio{% endif %} reveal"
+           style="--d:{{ loop.index0 * 0.09 }}s;">
+        <div class="info-inner">
+          <div class="goal-tag {% if goal=='no_f' %}nof{% elif goal=='meditation' %}med{% else %}cardio{% endif %}" style="margin-bottom:10px;">
             <span class="dot"></span>{{ goal_display_names[goal] }}
           </div>
-
           <div class="pct-bar-wrap">
             <div class="pct-bar-label">
-              <span>Done</span>
-              <span>{{ percentages[goal]|round(1) }}%</span>
+              <span>Done</span><strong>{{ percentages[goal] | round(1) }}%</strong>
             </div>
             <div class="pct-bar-track">
-              <div class="pct-bar-fill
-                {% if goal == 'no_f' %}nof
-                {% elif goal == 'meditation' %}med
-                {% else %}cardio{% endif %}"
-                style="width:{{ [percentages[goal]|round(1), 100]|min }}%"></div>
+              <div class="pct-bar-fill {% if goal=='no_f' %}nof{% elif goal=='meditation' %}med{% else %}cardio{% endif %}"
+                   style="width:{{ [percentages[goal]|round(1),100]|min }}%"></div>
             </div>
           </div>
-
-          <div class="stat-row">
-            <span class="sl">Current</span>
-            <span class="sv">🔥 {{ current_streaks[goal] }}
-              {% if goal in weekly_goals %}wk{% else %}d{% endif %}
-            </span>
-          </div>
-          <div class="stat-row">
-            <span class="sl">Longest</span>
-            <span class="sv">{{ longest_streaks[goal] }}
-              {% if goal in weekly_goals %}wk{% else %}d{% endif %}
-            </span>
-          </div>
-          <div class="stat-row">
-            <span class="sl">2nd best</span>
-            <span class="sv">{{ second_longest_streaks[goal] }}
-              {% if goal in weekly_goals %}wk{% else %}d{% endif %}
-            </span>
-          </div>
-          <div class="stat-row">
-            <span class="sl">Failures</span>
+          <div class="stat-row"><span class="sl">Current</span>
+            <span class="sv"><span class="fire">🔥</span> {{ current_streaks[goal] }} {% if goal in weekly_goals %}wk{% else %}d{% endif %}</span></div>
+          <div class="stat-row"><span class="sl">Longest</span>
+            <span class="sv">{{ longest_streaks[goal] }} {% if goal in weekly_goals %}wk{% else %}d{% endif %}</span></div>
+          <div class="stat-row"><span class="sl">2nd best</span>
+            <span class="sv">{{ second_longest_streaks[goal] }} {% if goal in weekly_goals %}wk{% else %}d{% endif %}</span></div>
+          <div class="stat-row"><span class="sl">Failures</span>
             <span class="sv">
               {% if last_failures[goal]|length == 0 %}
                 <span class="none-label">None 🎉</span>
               {% else %}
-                {% for f in last_failures[goal] %}
-                  <span class="failure-chip">{{ f }}</span>
-                {% endfor %}
+                {% for f in last_failures[goal] %}<span class="failure-chip">{{ f }}</span>{% endfor %}
               {% endif %}
-            </span>
-          </div>
+            </span></div>
         </div>
       </div>
       {% endfor %}
     </div>
 
-    <!-- Charts -->
-    <div class="card">
-      <div class="card-body">
-        <div class="section-label">Completion Charts</div>
-
-        {% for goal in goals %}
-        <div>
-          <div class="chart-goal-label">
-            <div class="goal-tag
-              {% if goal == 'no_f' %}nof
-              {% elif goal == 'meditation' %}med
-              {% else %}cardio{% endif %}"
-              style="margin-bottom:0;">
-              <span class="dot"></span>{{ goal_display_names[goal] }}
-            </div>
-            <span class="chart-sub">
-              {% if goal in weekly_goals %}Last 8 weeks{% else %}By day of week{% endif %}
-            </span>
+    <!-- ═══ CHARTS ════════════════════════════════════════════ -->
+    <div class="bob-wrap card-float reveal" style="--d:.1s;">
+      <div class="spin-shell ss-main">
+        <div class="ss-inner">
+          <div class="section-label">
+            <div class="ping-dot pd-med"><span></span></div>Completion Charts
           </div>
-
-          {% if goal in weekly_goals %}
-          <div class="bar-chart-wrap">
-            <canvas id="chart-weekly-{{ goal }}"></canvas>
-          </div>
-          {% else %}
-          <div class="pie-grid">
-            {% for day_data in weekly_chart_data[goal] %}
-            <div class="pie-item">
-              <div class="pie-wrap">
-                <canvas id="chart-{{ goal }}-{{ day_data.day }}"></canvas>
+          {% for goal in goals %}
+          <div>
+            <div class="chart-goal-label">
+              <div class="goal-tag {% if goal=='no_f' %}nof{% elif goal=='meditation' %}med{% else %}cardio{% endif %}" style="margin-bottom:0;">
+                <span class="dot"></span>{{ goal_display_names[goal] }}
               </div>
-              <div class="pie-day">{{ day_data.day[:3] }}</div>
+              <span class="chart-sub">{% if goal in weekly_goals %}Last 8 weeks{% else %}By day of week{% endif %}</span>
             </div>
-            {% endfor %}
+            {% if goal in weekly_goals %}
+            <div class="bar-chart-wrap"><canvas id="chart-weekly-{{ goal }}"></canvas></div>
+            {% else %}
+            <div class="pie-grid">
+              {% for day_data in weekly_chart_data[goal] %}
+              <div class="pie-item">
+                <div class="pie-wrap"><canvas id="chart-{{ goal }}-{{ day_data.day }}"></canvas></div>
+                <div class="pie-day">{{ day_data.day[:3] }}</div>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
           </div>
-          {% endif %}
-        </div>
-        {% if not loop.last %}<hr class="chart-divider">{% endif %}
-        {% endfor %}
-      </div>
-    </div>
-
-    <!-- Click Analysis -->
-    <div class="card">
-      <div class="card-body">
-        <div class="section-label">Click Analysis</div>
-        <div class="click-grid">
-          <div class="click-stat">
-            <div class="cs-val nof-c">{{ total_sum }}</div>
-            <div class="cs-label">Total</div>
-            <div class="cs-target">target: 28.5</div>
-          </div>
-          <div class="click-stat">
-            <div class="cs-val primary">{{ average_sum|round(2) }}</div>
-            <div class="cs-label">Monthly Avg</div>
-          </div>
+          {% if not loop.last %}<hr class="chart-divider">{% endif %}
+          {% endfor %}
         </div>
       </div>
     </div>
 
-    <!-- aMCC -->
-    <div class="amcc-card">
-      <h2>🧠 Grow the anterior Mid Cingulate Cortex</h2>
-      <p>Do the hard thing. Every rep counts.</p>
-      <div class="amcc-btns">
-        <form action="{{ url_for('increment') }}" method="POST">
-          <input type="hidden" name="value" value="0.5">
-          <button type="submit" class="btn-amcc celebration-button">0.5×</button>
-        </form>
-        <form action="{{ url_for('increment') }}" method="POST">
-          <input type="hidden" name="value" value="1">
-          <button type="submit" class="btn-amcc celebration-button">1×</button>
-        </form>
-        <form action="{{ url_for('increment') }}" method="POST">
-          <input type="hidden" name="value" value="2">
-          <button type="submit" class="btn-amcc celebration-button">2×</button>
-        </form>
+    <!-- ═══ CLICK ANALYSIS ════════════════════════════════════ -->
+    <div class="bob-wrap card-float reveal" style="--d:.05s;">
+      <div class="spin-shell ss-pri">
+        <div class="ss-inner">
+          <div class="section-label">
+            <div class="ping-dot pd-pri"><span></span></div>Click Analysis
+          </div>
+          <div class="click-grid">
+            <div class="click-stat">
+              <div class="cs-label">Total</div>
+              <div class="cs-val amber">{{ total_sum }}</div>
+              <div class="cs-target">of 28.5 goal</div>
+            </div>
+            <div class="click-stat">
+              <div class="cs-label">Monthly Avg</div>
+              <div class="cs-val primary">{{ average_sum | round(2) }}</div>
+              <div class="cs-target">per month</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Hidden click sums (preserved) -->
     <div style="display:none;">
-      {% for date_str, s in click_sums.items() %}
-        <span>{{ date_str }}:{{ s }}</span>
-      {% endfor %}
+      {% for date_str, s in click_sums.items() %}<span>{{ date_str }}:{{ s }}</span>{% endfor %}
+    </div>
+
+    <!-- ═══ aMCC CARD ════════════════════════════════════════ -->
+    <div class="amcc-card reveal" style="--d:.08s;">
+      <div class="amcc-inner">
+        <div class="ag1"></div><div class="ag2"></div>
+        <h2>🧠 Grow the anterior Mid Cingulate Cortex</h2>
+        <p>Do the hard thing — every single rep counts.</p>
+        <div class="amcc-btns">
+          <form action="{{ url_for('increment') }}" method="POST">
+            <input type="hidden" name="value" value="0.5">
+            <button type="submit" class="btn-amcc b-half celebration-button">
+              <div class="btn-amcc-fill"></div>
+              <div class="btn-shimmer"></div>
+              0.5×
+            </button>
+          </form>
+          <form action="{{ url_for('increment') }}" method="POST">
+            <input type="hidden" name="value" value="1">
+            <button type="submit" class="btn-amcc b-one celebration-button">
+              <div class="btn-amcc-fill"></div>
+              <div class="btn-shimmer"></div>
+              1×
+            </button>
+          </form>
+          <form action="{{ url_for('increment') }}" method="POST">
+            <input type="hidden" name="value" value="2">
+            <button type="submit" class="btn-amcc b-two celebration-button">
+              <div class="btn-amcc-fill"></div>
+              <div class="btn-shimmer"></div>
+              2×
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
 
   </div><!-- /.wrapper -->
@@ -506,49 +320,232 @@
     const weeklyChartData = {{ weekly_chart_data | tojson }};
     const weeklyGoals     = {{ weekly_goals      | tojson }};
     const dailyGoals      = {{ daily_goals       | tojson }};
+    const currentStreaks  = {{ current_streaks   | tojson }};
 
-    // Bar charts for weekly goals
+    /* ── Scroll progress bar ───────────────────────────────── */
+    const pb = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+      const max = document.body.scrollHeight - window.innerHeight;
+      pb.style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
+    }, {passive:true});
+
+    /* ── Background orb parallax (wrapper-trick, no CSS conflict) */
+    const orbWrappers = document.querySelectorAll('.orb-pw');
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          orbWrappers.forEach(pw => {
+            const speed = parseFloat(pw.dataset.speed) || 0.1;
+            pw.style.transform = 'translateY(' + (window.scrollY * speed) + 'px)';
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, {passive:true});
+
+    /* ── Enhanced sparkle particles (brand colors, bottom-to-top) */
+    const sl = document.getElementById('sparkle-layer');
+    const sparkleColors = [
+      'radial-gradient(circle,rgba(242,225,196,.95) 0%,rgba(184,137,76,.04) 100%)',
+      'radial-gradient(circle,rgba(232,200,150,.95) 0%,rgba(201,149,74,.04) 100%)',
+      'radial-gradient(circle,rgba(212,187,158,.95) 0%,rgba(139,100,52,.04) 100%)',
+      'radial-gradient(circle,rgba(201,164,154,.9)  0%,rgba(164,115,106,.04) 100%)',
+      'radial-gradient(circle,rgba(167,182,135,.9)  0%,rgba(125,142,90,.04)  100%)',
+      'radial-gradient(circle,rgba(167,190,201,.85) 0%,rgba(123,152,165,.04) 100%)',
+      '#fffdf7',
+    ];
+    function spawnSparkle() {
+      const s   = document.createElement('div');
+      s.className = 'sparkle';
+      const sz  = 3 + Math.random() * 8;
+      const dur = 3.5 + Math.random() * 4.5;
+      s.style.cssText =
+        'left:' + (Math.random()*100) + '%;' +
+        'width:' + sz + 'px;height:' + sz + 'px;' +
+        'background:' + sparkleColors[Math.floor(Math.random()*sparkleColors.length)] + ';' +
+        'animation-duration:' + dur + 's;' +
+        'animation-delay:' + (Math.random()*1.5) + 's;';
+      sl.appendChild(s);
+      setTimeout(() => s.remove(), (dur + 2.8) * 1000);
+    }
+    /* Perf: skip sparkles entirely on narrow/touch devices */
+    const enableSparkles = window.matchMedia('(min-width:601px)').matches;
+    if (enableSparkles) {
+      for (let i = 0; i < 6; i++) setTimeout(spawnSparkle, i * 180);
+      setInterval(spawnSparkle, 900);
+    }
+
+    /* ── Touch burst dots ─────────────────────────────────── */
+    const burstColors = [
+      'rgba(232,200,150,.9)','rgba(212,187,158,.9)',
+      'rgba(167,182,135,.9)','rgba(201,164,154,.9)',
+      'rgba(167,190,201,.9)','rgba(242,225,196,.9)',
+    ];
+    document.addEventListener('touchstart', e => {
+      const t = e.touches[0];
+      const n = 8 + Math.floor(Math.random()*4);
+      for (let i = 0; i < n; i++) {
+        const d = document.createElement('div');
+        d.className = 'burst-dot';
+        const ang  = (i / n) * Math.PI * 2 + Math.random() * 0.4;
+        const dist = 22 + Math.random() * 38;
+        const sz   = 5 + Math.random() * 7;
+        d.style.cssText =
+          'left:'+t.clientX+'px;top:'+t.clientY+'px;'+
+          'width:'+sz+'px;height:'+sz+'px;'+
+          'background:'+burstColors[i%burstColors.length]+';'+
+          '--dx:'+(Math.cos(ang)*dist)+'px;--dy:'+(Math.sin(ang)*dist)+'px;';
+        document.body.appendChild(d);
+        setTimeout(() => d.remove(), 750);
+      }
+    }, {passive:true});
+
+    /* ── Scroll reveal ─────────────────────────────────────── */
+    const revObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revObs.unobserve(e.target); } });
+    }, {threshold:.06});
+    document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+    /* ── Animated % counters (slot-machine feel) ────────────── */
+    function easeOut(t) { return 1 - Math.pow(1-t, 3); }
+    function animPct(el, target) {
+      const dur = 1200, t0 = performance.now();
+      (function tick(now) {
+        const p = Math.min((now - t0) / dur, 1);
+        el.textContent = (target * easeOut(p)).toFixed(1) + '%';
+        if (p < 1) requestAnimationFrame(tick);
+      })(t0);
+    }
+    const cntObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          animPct(e.target, parseFloat(e.target.dataset.target || '0'));
+          cntObs.unobserve(e.target);
+        }
+      });
+    }, {threshold:.5});
+    document.querySelectorAll('.sc-pct[data-target]').forEach(el => cntObs.observe(el));
+
+    /* ── Milestone golden ring (streak ≥ 7) ─────────────────── */
+    const goalColorClass = {no_f:'nof', meditation:'med', weekly_cardio:'cardio'};
+    Object.entries(currentStreaks).forEach(([goal, streak]) => {
+      if (streak >= 7) {
+        const cls = goalColorClass[goal];
+        document.querySelector('.sc-shell.' + cls)?.classList.add('milestone');
+      }
+    });
+
+    /* ── Periodic particle burst from stat cards ─────────────── */
+    const cardBurstColors = {nof:'rgba(167,182,135,.85)',med:'rgba(201,164,154,.85)',cardio:'rgba(167,190,201,.85)'};
+    function burstFromCard(cardEl, color) {
+      const rect = cardEl.getBoundingClientRect();
+      const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+      for (let i = 0; i < 7; i++) {
+        const d = document.createElement('div');
+        d.className = 'burst-dot';
+        const ang = (i/7)*Math.PI*2;
+        const dist = 15 + Math.random()*25;
+        const sz = 4 + Math.random()*4;
+        d.style.cssText = 'left:'+cx+'px;top:'+cy+'px;width:'+sz+'px;height:'+sz+'px;background:'+color+';--dx:'+(Math.cos(ang)*dist)+'px;--dy:'+(Math.sin(ang)*dist)+'px;animation-duration:.8s;';
+        document.body.appendChild(d);
+        setTimeout(() => d.remove(), 900);
+      }
+    }
+    if (enableSparkles) {
+      setInterval(() => {
+        document.querySelectorAll('.stat-card').forEach(card => {
+          const cls = ['nof','med','cardio'].find(c => card.classList.contains(c));
+          if (cls) burstFromCard(card, cardBurstColors[cls]);
+        });
+      }, 8000);
+    }
+
+    /* ── Gyroscope tilt — removes card-float class when gyro fires */
+    let gyroActive = false;
+    const bobCards = document.querySelectorAll('.bob-wrap');
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', e => {
+        if (e.beta === null) return;
+        if (!gyroActive) {
+          gyroActive = true;
+          bobCards.forEach(c => {
+            c.classList.remove('card-float');
+            c.style.transition = 'transform .2s ease';
+          });
+        }
+        const rx = Math.max(-18, Math.min(18, e.beta  - 45)) / 18;
+        const ry = Math.max(-18, Math.min(18, e.gamma))       / 18;
+        bobCards.forEach(c => {
+          c.style.transform = 'perspective(900px) rotateX('+( rx*5)+'deg) rotateY('+(ry*5)+'deg)';
+        });
+      }, {passive:true});
+    }
+
+    /* ── Checkbox pop + row flash ────────────────────────────── */
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', function() {
+        if (!this.checked) return;
+        this.classList.remove('cb-pop'); void this.offsetWidth; this.classList.add('cb-pop');
+        this.addEventListener('animationend', () => this.classList.remove('cb-pop'), {once:true});
+        const row = this.closest('tr'); if (!row) return;
+        const fl = this.classList.contains('check-med') ? 'rfl-med' :
+                   this.classList.contains('check-cardio') ? 'rfl-cardio' : 'rfl-nof';
+        row.classList.remove('rfl-nof','rfl-med','rfl-cardio'); void row.offsetWidth;
+        row.classList.add(fl);
+        row.addEventListener('animationend', () => row.classList.remove(fl), {once:true});
+      });
+    });
+
+    /* ── Ripple on all tappable buttons ─────────────────────── */
+    function addRipple(btn, ev) {
+      const rect = btn.getBoundingClientRect();
+      const cx = ((ev.touches ? ev.touches[0].clientX : ev.clientX) - rect.left);
+      const cy = ((ev.touches ? ev.touches[0].clientY : ev.clientY) - rect.top);
+      const sz = Math.max(rect.width, rect.height) * 1.6;
+      const r  = document.createElement('div');
+      r.className = 'rpl';
+      r.style.cssText = 'width:'+sz+'px;height:'+sz+'px;left:'+(cx-sz/2)+'px;top:'+(cy-sz/2)+'px;';
+      btn.appendChild(r);
+      setTimeout(() => r.remove(), 680);
+    }
+    document.querySelectorAll('.btn-amcc,.btn-save').forEach(btn => {
+      btn.addEventListener('touchstart', e => addRipple(btn, e), {passive:true});
+      btn.addEventListener('mousedown',  e => addRipple(btn, e));
+    });
+
+    /* ── Bar charts (weekly goals) ───────────────────────────── */
     weeklyGoals.forEach(goal => {
-      const raw    = weeklyChartData[goal];
-      const canvas = document.getElementById('chart-weekly-' + goal);
-      if (!canvas) return;
-
-      new Chart(canvas.getContext('2d'), {
+      const raw = weeklyChartData[goal];
+      const cv  = document.getElementById('chart-weekly-' + goal);
+      if (!cv) return;
+      new Chart(cv.getContext('2d'), {
         type: 'bar',
         data: {
           labels: raw.map(d => d.day),
           datasets: [{
-            data: raw.map(d =>
-              d.achieved     === 1 ? 1    :
-              d.not_achieved === 1 ? 0.18 : 0.08
-            ),
-            backgroundColor: raw.map(d =>
-              d.achieved     === 1 ? '#0ea5e9' :
-              d.not_achieved === 1 ? '#fca5a5' : '#e2e8f0'
-            ),
-            borderRadius: 8,
-            borderSkipped: false,
+            data: raw.map(d => d.achieved===1 ? 1 : d.not_achieved===1 ? 0.22 : 0.08),
+            backgroundColor: raw.map(d => d.achieved===1 ? '#7b98a5' : d.not_achieved===1 ? '#d9a89e' : '#e5d7bc'),
+            borderRadius: 9, borderSkipped: false,
           }]
         },
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
+          responsive:true, maintainAspectRatio:false,
+          animation:{ duration:900, easing:'easeOutQuart' },
           scales: {
-            y: { display: false, min: 0, max: 1.25 },
-            x: {
-              grid: { display: false },
-              ticks: { font: { size: 10, family: 'Inter' }, color: '#6b7a99', maxRotation: 30 }
-            }
+            y: {display:false, min:0, max:1.35},
+            x: {grid:{display:false}, ticks:{font:{size:10,family:'Inter',weight:'600'},color:'#8a7762',maxRotation:30}}
           },
           plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
+            legend:{display:false},
+            tooltip:{
+              backgroundColor:'rgba(61,46,31,.93)', padding:10, cornerRadius:10,
+              callbacks:{
+                title: ctx => raw[ctx[0].dataIndex].full_label || raw[ctx[0].dataIndex].day,
                 label: ctx => {
                   const d = raw[ctx.dataIndex];
-                  if (d.achieved     === 1) return '✓ Achieved';
-                  if (d.not_achieved === 1) return '✗ Not achieved';
-                  return '— No data yet';
+                  return d.achieved===1 ? '✓ Achieved' : d.not_achieved===1 ? '✗ Not achieved' : '— No data yet';
                 }
               }
             }
@@ -557,41 +554,23 @@
       });
     });
 
-    // Pie charts for daily goals
-    const PIE_COLORS = {
-      no_f:       ['#059669', '#e4e9f2'],
-      meditation: ['#7c3aed', '#e4e9f2'],
-    };
-
+    /* ── Pie charts (daily goals) ────────────────────────────── */
+    const PIE_C = {no_f:['#7d8e5a','#e5d7bc'], meditation:['#a4736a','#e5d7bc']};
     dailyGoals.forEach(goal => {
-      const colors = PIE_COLORS[goal] || ['#5b5ef4', '#e4e9f2'];
-      weeklyChartData[goal].forEach(dayData => {
-        const canvas = document.getElementById('chart-' + goal + '-' + dayData.day);
-        if (!canvas) return;
-        new Chart(canvas.getContext('2d'), {
+      const cols = PIE_C[goal] || ['#b8894c','#e5d7bc'];
+      weeklyChartData[goal].forEach(dd => {
+        const cv = document.getElementById('chart-'+goal+'-'+dd.day);
+        if (!cv) return;
+        new Chart(cv.getContext('2d'), {
           type: 'pie',
-          data: {
-            labels: ['Achieved', 'Not Achieved'],
-            datasets: [{
-              data: [dayData.achieved, dayData.not_achieved],
-              backgroundColor: colors,
-              borderColor: '#fff',
-              borderWidth: 2
-            }]
-          },
+          data: {labels:['Achieved','Not Achieved'], datasets:[{data:[dd.achieved,dd.not_achieved],backgroundColor:cols,borderColor:'#fffdf7',borderWidth:2}]},
           options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            responsive:true, maintainAspectRatio:false, animation:{duration:700},
             plugins: {
-              legend: { display: false },
-              tooltip: {
-                callbacks: {
-                  label: ctx => {
-                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                    const pct = total > 0 ? (ctx.parsed / total * 100).toFixed(1) : '0.0';
-                    return ctx.label + ': ' + pct + '%';
-                  }
-                }
+              legend:{display:false},
+              tooltip:{
+                backgroundColor:'rgba(61,46,31,.93)', padding:8, cornerRadius:8,
+                callbacks:{label:ctx=>{ const t=ctx.dataset.data.reduce((a,b)=>a+b,0); return ctx.label+': '+(t>0?(ctx.parsed/t*100).toFixed(1):'0.0')+'%'; }}
               }
             }
           }
@@ -599,18 +578,14 @@
       });
     });
 
-    // Confetti for aMCC buttons
+    /* ── Confetti + delayed submit ───────────────────────────── */
     function showConfetti() {
       const end = Date.now() + 3000;
-      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
-      const rand = (a, b) => Math.random() * (b - a) + a;
+      const defs = {startVelocity:30, spread:360, ticks:60, zIndex:9999};
+      const rnd = (a,b) => Math.random()*(b-a)+a;
       const iv = setInterval(() => {
-        const left = end - Date.now();
-        if (left <= 0) return clearInterval(iv);
-        confetti(Object.assign({}, defaults, {
-          particleCount: 50 * (left / 3000),
-          origin: { x: rand(0.1, 0.9), y: Math.random() - 0.2 }
-        }));
+        const left = end - Date.now(); if (left <= 0) return clearInterval(iv);
+        confetti(Object.assign({},defs,{particleCount:50*(left/3000), origin:{x:rnd(.1,.9),y:Math.random()-.2}}));
       }, 250);
     }
     function handleAmcc(evt) {
@@ -620,7 +595,7 @@
     }
     document.querySelectorAll('.celebration-button').forEach(btn => {
       btn.addEventListener('click',      handleAmcc);
-      btn.addEventListener('touchstart', handleAmcc, { passive: false });
+      btn.addEventListener('touchstart', handleAmcc, {passive:false});
     });
   </script>
 </body>
