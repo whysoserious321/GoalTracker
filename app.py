@@ -56,7 +56,8 @@ def get_last_n_weeks(n):
     return result
 
 
-def calc_streaks(bool_list):
+def calc_streaks(val_list):
+    bool_list = [v for v in val_list if v is not None and v != 'skip']
     streaks, current = [], 0
     for achieved in bool_list:
         if achieved:
@@ -81,17 +82,25 @@ def index():
             if date not in data['dates']:
                 data['dates'][date] = {}
             for goal in DAILY_GOALS:
-                data['dates'][date][goal] = (
-                    request.form.get(f'{date}_{goal}') == 'on'
-                )
+                val = request.form.get(f'{date}_{goal}', 'false')
+                if val == 'true':
+                    data['dates'][date][goal] = True
+                elif val == 'skip':
+                    data['dates'][date][goal] = 'skip'
+                else:
+                    data['dates'][date][goal] = False
         for week in last_four_weeks:
             wk = week['key']
             if wk not in data['weeks']:
                 data['weeks'][wk] = {}
             for goal in WEEKLY_GOALS:
-                data['weeks'][wk][goal] = (
-                    request.form.get(f'{wk}_{goal}') == 'on'
-                )
+                val = request.form.get(f'{wk}_{goal}', 'false')
+                if val == 'true':
+                    data['weeks'][wk][goal] = True
+                elif val == 'skip':
+                    data['weeks'][wk][goal] = 'skip'
+                else:
+                    data['weeks'][wk][goal] = False
         save_data(data)
         return redirect(url_for('index'))
 
@@ -109,8 +118,8 @@ def index():
     for goal in DAILY_GOALS:
         dow       = {d: {'achieved': 0, 'total': 0} for d in day_names}
         all_dates = sorted(data['dates'].keys())
-        bool_list = [data['dates'][d].get(goal, False) for d in all_dates]
-        cur, sorted_s = calc_streaks(bool_list)
+        val_list  = [data['dates'][d].get(goal, None) for d in all_dates]
+        cur, sorted_s = calc_streaks(val_list)
 
         current_streaks[goal]        = cur
         longest_streaks[goal]        = sorted_s[0] if sorted_s else 0
@@ -128,13 +137,13 @@ def index():
         total_days, achieved_days = 0, 0
         for date in all_dates:
             val = data['dates'][date].get(goal, None)
-            if val is not None:
+            if val is not None and val != 'skip':
                 total_days += 1
-                if val:
+                if val is True:
                     achieved_days += 1
                 day_name = datetime.strptime(date, '%Y-%m-%d').strftime('%A')
                 dow[day_name]['total'] += 1
-                if val:
+                if val is True:
                     dow[day_name]['achieved'] += 1
 
         percentages[goal] = (achieved_days / total_days * 100) if total_days else 0
@@ -151,15 +160,15 @@ def index():
             })
 
         streak_data[goal] = {
-            date: data['dates'].get(date, {}).get(goal, False)
+            date: data['dates'].get(date, {}).get(goal, None)
             for date in last_seven_days
         }
 
     # ── Weekly goals ──────────────────────────────────────────────────────
     for goal in WEEKLY_GOALS:
         all_weeks = sorted(data['weeks'].keys())
-        bool_list = [data['weeks'][wk].get(goal, False) for wk in all_weeks]
-        cur, sorted_s = calc_streaks(bool_list)
+        val_list  = [data['weeks'][wk].get(goal, None) for wk in all_weeks]
+        cur, sorted_s = calc_streaks(val_list)
 
         current_streaks[goal]        = cur
         longest_streaks[goal]        = sorted_s[0] if sorted_s else 0
@@ -178,12 +187,13 @@ def index():
             data['weeks'][wk].get(goal, None)
             for wk in all_weeks
             if data['weeks'][wk].get(goal, None) is not None
+               and data['weeks'][wk].get(goal, None) != 'skip'
         ]
         total = len(recorded)
         percentages[goal] = (sum(recorded) / total * 100) if total else 0
 
         streak_data[goal] = {
-            week['key']: data['weeks'].get(week['key'], {}).get(goal, False)
+            week['key']: data['weeks'].get(week['key'], {}).get(goal, None)
             for week in last_four_weeks
         }
 
@@ -197,6 +207,7 @@ def index():
                 'achieved':     1 if val is True  else 0,
                 'not_achieved': 1 if val is False else 0,
                 'no_data':      1 if val is None  else 0,
+                'skipped':      1 if val == 'skip' else 0,
             })
 
     # ── Click analysis (unchanged) ────────────────────────────────────────

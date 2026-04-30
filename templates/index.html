@@ -23,6 +23,12 @@
     <div class="orb-pw" data-speed="0.09"><div class="bg-orb bg-orb-5"></div></div>
   </div>
   <div id="sparkle-layer"></div>
+  <div id="float-orbs" aria-hidden="true">
+    <div class="fo fo-1"></div><div class="fo fo-2"></div><div class="fo fo-3"></div>
+    <div class="fo fo-4"></div><div class="fo fo-5"></div><div class="fo fo-6"></div>
+    <div class="fo fo-7"></div><div class="fo fo-8"></div><div class="fo fo-9"></div>
+    <div class="fo fo-10"></div>
+  </div>
 
   <!-- ═══ HEADER ═══════════════════════════════════════════════ -->
   <div class="header">
@@ -45,14 +51,15 @@
 
       <!-- aMCC ring -->
       {% set fill_ratio = [total_sum / 28.5, 1.0] | min %}
-      {% set dashoff    = ((1 - fill_ratio) * 138.2) | round(2) %}
+      {% set dashoff    = ((1 - fill_ratio) * 233.6) | round(2) %}
       <div class="header-amcc">
         <div class="amcc-ring-wrap">
           <div class="ring-glow"></div>
-          <svg class="amcc-ring-svg" viewBox="0 0 68 68">
-            <circle class="ring-track" cx="34" cy="34" r="22" fill="none" stroke-width="5"/>
-            <circle class="ring-fill"  cx="34" cy="34" r="22" fill="none" stroke-width="5"
-              stroke-dasharray="138.2" stroke-dashoffset="{{ dashoff }}"/>
+          <div class="ring-outer-pulse"></div>
+          <svg class="amcc-ring-svg" viewBox="0 0 110 110">
+            <circle class="ring-track" cx="55" cy="55" r="34" fill="none" stroke-width="7"/>
+            <circle class="ring-fill"  cx="55" cy="55" r="34" fill="none" stroke-width="7"
+              stroke-dasharray="213.6" stroke-dashoffset="{{ dashoff }}"/>
           </svg>
           <div class="amcc-ring-center">
             <span class="arc-val">{{ total_sum | round(1) }}</span>
@@ -124,14 +131,16 @@
                   <tr>
                     <td class="date-col">{{ date }}</td>
                     <td class="check-col">
-                      <input type="checkbox" class="check-nof"
-                        name="{{ date }}_no_f"
-                        {% if streak_data['no_f'][date] %}checked{% endif %}/>
+                      {% set val = streak_data['no_f'][date] %}
+                      {% set state = 'true' if val is sameas true else ('skip' if val == 'skip' else 'false') %}
+                      <input type="hidden" name="{{ date }}_no_f" value="{{ state }}">
+                      <button type="button" class="state-toggle check-nof" data-state="{{ state }}"></button>
                     </td>
                     <td class="check-col">
-                      <input type="checkbox" class="check-med"
-                        name="{{ date }}_meditation"
-                        {% if streak_data['meditation'][date] %}checked{% endif %}/>
+                      {% set val = streak_data['meditation'][date] %}
+                      {% set state = 'true' if val is sameas true else ('skip' if val == 'skip' else 'false') %}
+                      <input type="hidden" name="{{ date }}_meditation" value="{{ state }}">
+                      <button type="button" class="state-toggle check-med" data-state="{{ state }}"></button>
                     </td>
                   </tr>
                   {% endfor %}
@@ -155,9 +164,10 @@
                   <tr>
                     <td class="week-range">{{ week.label }}</td>
                     <td class="check-col">
-                      <input type="checkbox" class="check-cardio"
-                        name="{{ week.key }}_{{ goal }}"
-                        {% if streak_data[goal][week.key] %}checked{% endif %}/>
+                      {% set val = streak_data[goal][week.key] %}
+                      {% set state = 'true' if val is sameas true else ('skip' if val == 'skip' else 'false') %}
+                      <input type="hidden" name="{{ week.key }}_{{ goal }}" value="{{ state }}">
+                      <button type="button" class="state-toggle check-cardio" data-state="{{ state }}"></button>
                     </td>
                   </tr>
                   {% endfor %}
@@ -329,21 +339,23 @@
       pb.style.width = (max > 0 ? window.scrollY / max * 100 : 0) + '%';
     }, {passive:true});
 
-    /* ── Background orb parallax (wrapper-trick, no CSS conflict) */
+    /* ── Background orb parallax — desktop only (mobile: skip to save main-thread) */
     const orbWrappers = document.querySelectorAll('.orb-pw');
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          orbWrappers.forEach(pw => {
-            const speed = parseFloat(pw.dataset.speed) || 0.1;
-            pw.style.transform = 'translateY(' + (window.scrollY * speed) + 'px)';
+    if (window.matchMedia('(min-width:601px)').matches) {
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            orbWrappers.forEach(pw => {
+              const speed = parseFloat(pw.dataset.speed) || 0.1;
+              pw.style.transform = 'translateY(' + (window.scrollY * speed) + 'px)';
+            });
+            ticking = false;
           });
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }, {passive:true});
+          ticking = true;
+        }
+      }, {passive:true});
+    }
 
     /* ── Enhanced sparkle particles (brand colors, bottom-to-top) */
     const sl = document.getElementById('sparkle-layer');
@@ -404,8 +416,17 @@
 
     /* ── Scroll reveal ─────────────────────────────────────── */
     const revObs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revObs.unobserve(e.target); } });
-    }, {threshold:.06});
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          revObs.unobserve(e.target);
+          /* Chart canvases need a resize signal after their parent opacity-transitions in */
+          if (e.target.querySelector('canvas')) {
+            setTimeout(() => window.dispatchEvent(new Event('resize')), 750);
+          }
+        }
+      });
+    }, {threshold:.06, rootMargin:'0px 0px 60px 0px'});
     document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
 
     /* ── Animated % counters (slot-machine feel) ────────────── */
@@ -438,7 +459,7 @@
     });
 
     /* ── Periodic particle burst from stat cards ─────────────── */
-    const cardBurstColors = {nof:'rgba(167,182,135,.85)',med:'rgba(201,164,154,.85)',cardio:'rgba(167,190,201,.85)'};
+    const cardBurstColors = {nof:'rgba(167,182,135,.85)',med:'rgba(196,176,24,.85)',cardio:'rgba(167,190,201,.85)'};
     function burstFromCard(cardEl, color) {
       const rect = cardEl.getBoundingClientRect();
       const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
@@ -483,18 +504,26 @@
       }, {passive:true});
     }
 
-    /* ── Checkbox pop + row flash ────────────────────────────── */
-    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-      cb.addEventListener('change', function() {
-        if (!this.checked) return;
-        this.classList.remove('cb-pop'); void this.offsetWidth; this.classList.add('cb-pop');
-        this.addEventListener('animationend', () => this.classList.remove('cb-pop'), {once:true});
+    /* ── Three-state toggle: false → true → skip → false ───────── */
+    document.querySelectorAll('.state-toggle').forEach(btn => {
+      const hidden = btn.previousElementSibling;
+      btn.addEventListener('click', function() {
+        const current = this.dataset.state;
+        const next = current === 'false' ? 'true' : current === 'true' ? 'skip' : 'false';
+        this.dataset.state = next;
+        hidden.value = next;
+        this.classList.remove('st-pop'); void this.offsetWidth; this.classList.add('st-pop');
+        this.addEventListener('animationend', () => this.classList.remove('st-pop'), {once:true});
         const row = this.closest('tr'); if (!row) return;
-        const fl = this.classList.contains('check-med') ? 'rfl-med' :
-                   this.classList.contains('check-cardio') ? 'rfl-cardio' : 'rfl-nof';
-        row.classList.remove('rfl-nof','rfl-med','rfl-cardio'); void row.offsetWidth;
-        row.classList.add(fl);
-        row.addEventListener('animationend', () => row.classList.remove(fl), {once:true});
+        row.classList.remove('rfl-nof','rfl-med','rfl-cardio','rfl-skip'); void row.offsetWidth;
+        if (next === 'true') {
+          const fl = this.classList.contains('check-med') ? 'rfl-med' :
+                     this.classList.contains('check-cardio') ? 'rfl-cardio' : 'rfl-nof';
+          row.classList.add(fl);
+        } else if (next === 'skip') {
+          row.classList.add('rfl-skip');
+        }
+        row.addEventListener('animationend', () => row.classList.remove('rfl-nof','rfl-med','rfl-cardio','rfl-skip'), {once:true});
       });
     });
 
@@ -525,8 +554,8 @@
         data: {
           labels: raw.map(d => d.day),
           datasets: [{
-            data: raw.map(d => d.achieved===1 ? 1 : d.not_achieved===1 ? 0.22 : 0.08),
-            backgroundColor: raw.map(d => d.achieved===1 ? '#7b98a5' : d.not_achieved===1 ? '#d9a89e' : '#e5d7bc'),
+            data: raw.map(d => d.skipped===1 ? 0.5 : d.achieved===1 ? 1 : d.not_achieved===1 ? 0.22 : 0.08),
+            backgroundColor: raw.map(d => d.skipped===1 ? '#d4c4b0' : d.achieved===1 ? '#7b98a5' : d.not_achieved===1 ? '#d9a89e' : '#e5d7bc'),
             borderRadius: 9, borderSkipped: false,
           }]
         },
@@ -545,7 +574,7 @@
                 title: ctx => raw[ctx[0].dataIndex].full_label || raw[ctx[0].dataIndex].day,
                 label: ctx => {
                   const d = raw[ctx.dataIndex];
-                  return d.achieved===1 ? '✓ Achieved' : d.not_achieved===1 ? '✗ Not achieved' : '— No data yet';
+                  return d.skipped===1 ? '— Skipped' : d.achieved===1 ? '✓ Achieved' : d.not_achieved===1 ? '✗ Not achieved' : '— No data yet';
                 }
               }
             }
@@ -555,7 +584,7 @@
     });
 
     /* ── Pie charts (daily goals) ────────────────────────────── */
-    const PIE_C = {no_f:['#7d8e5a','#e5d7bc'], meditation:['#a4736a','#e5d7bc']};
+    const PIE_C = {no_f:['#7d8e5a','#e5d7bc'], meditation:['#c4b018','#e5d7bc']};
     dailyGoals.forEach(goal => {
       const cols = PIE_C[goal] || ['#b8894c','#e5d7bc'];
       weeklyChartData[goal].forEach(dd => {
