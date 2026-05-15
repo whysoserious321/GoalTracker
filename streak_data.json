@@ -2302,8 +2302,60 @@
             "meditation": true
         },
         "2026-04-30": {
-            "no_f": "skip",
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-01": {
+            "no_f": false,
             "meditation": "skip"
+        },
+        "2026-05-02": {
+            "no_f": false,
+            "meditation": "skip"
+        },
+        "2026-05-03": {
+            "no_f": true,
+            "meditation": "skip"
+        },
+        "2026-05-04": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-05": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-06": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-07": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-08": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-09": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-10": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-11": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-12": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-13": {
+            "no_f": true,
+            "meditation": true
         }
     },
     "click_data": {
@@ -2514,22 +2566,16 @@
         }
     },
     "weeks": {
-        "2026-04-13": {
-            "weekly_cardio": true
-        },
-        "2026-03-23": {
-            "weekly_cardio": true
-        },
-        "2026-03-30": {
-            "weekly_cardio": true
-        },
-        "2026-04-06": {
-            "weekly_cardio": true
-        },
         "2026-04-20": {
             "weekly_cardio": true
         },
         "2026-04-27": {
+            "weekly_cardio": true
+        },
+        "2026-05-04": {
+            "weekly_cardio": true
+        },
+        "2026-05-11": {
             "weekly_cardio": "skip"
         }
     }
