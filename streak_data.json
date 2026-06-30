@@ -2356,6 +2356,190 @@
         "2026-05-13": {
             "no_f": true,
             "meditation": true
+        },
+        "2026-05-14": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-15": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-16": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-17": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-18": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-19": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-20": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-21": {
+            "no_f": false,
+            "meditation": "skip"
+        },
+        "2026-05-22": {
+            "no_f": false,
+            "meditation": "skip"
+        },
+        "2026-05-23": {
+            "no_f": false,
+            "meditation": "skip"
+        },
+        "2026-05-24": {
+            "no_f": false,
+            "meditation": "skip"
+        },
+        "2026-05-25": {
+            "no_f": false,
+            "meditation": "skip"
+        },
+        "2026-05-26": {
+            "no_f": false,
+            "meditation": true
+        },
+        "2026-05-27": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-28": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-29": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-30": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-05-31": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-06-01": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-06-02": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-06-03": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-06-04": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-06-05": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-06-06": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-06-07": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-06-08": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-06-09": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-06-10": {
+            "no_f": true,
+            "meditation": "skip"
+        },
+        "2026-06-11": {
+            "no_f": true,
+            "meditation": "skip"
+        },
+        "2026-06-12": {
+            "no_f": true,
+            "meditation": "skip"
+        },
+        "2026-06-13": {
+            "no_f": true,
+            "meditation": "skip"
+        },
+        "2026-06-14": {
+            "no_f": true,
+            "meditation": "skip"
+        },
+        "2026-06-15": {
+            "no_f": true,
+            "meditation": "skip"
+        },
+        "2026-06-16": {
+            "no_f": true,
+            "meditation": "skip"
+        },
+        "2026-06-17": {
+            "no_f": false,
+            "meditation": "skip"
+        },
+        "2026-06-18": {
+            "no_f": false,
+            "meditation": "skip"
+        },
+        "2026-06-19": {
+            "no_f": false,
+            "meditation": "skip"
+        },
+        "2026-06-20": {
+            "no_f": false,
+            "meditation": "skip"
+        },
+        "2026-06-21": {
+            "no_f": true,
+            "meditation": false
+        },
+        "2026-06-22": {
+            "no_f": false,
+            "meditation": false
+        },
+        "2026-06-23": {
+            "no_f": true,
+            "meditation": false
+        },
+        "2026-06-24": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-06-25": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-06-26": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-06-27": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-06-28": {
+            "no_f": true,
+            "meditation": true
         }
     },
     "click_data": {
@@ -2563,6 +2747,31 @@
             "1x": 1,
             "2x": 0,
             "0.5x": 0
+        },
+        "2026-05-26": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
+        },
+        "2026-06-17": {
+            "1x": 1,
+            "2x": 1,
+            "0.5x": 0
+        },
+        "2026-06-19": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
+        },
+        "2026-06-24": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
+        },
+        "2026-06-27": {
+            "1x": 1,
+            "2x": 0,
+            "0.5x": 0
         }
     },
     "weeks": {
@@ -2576,6 +2785,24 @@
             "weekly_cardio": true
         },
         "2026-05-11": {
+            "weekly_cardio": "skip"
+        },
+        "2026-05-18": {
+            "weekly_cardio": true
+        },
+        "2026-05-25": {
+            "weekly_cardio": true
+        },
+        "2026-06-01": {
+            "weekly_cardio": true
+        },
+        "2026-06-08": {
+            "weekly_cardio": "skip"
+        },
+        "2026-06-15": {
+            "weekly_cardio": "skip"
+        },
+        "2026-06-22": {
             "weekly_cardio": "skip"
         }
     }
