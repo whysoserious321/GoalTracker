@@ -51,15 +51,15 @@
 
       <!-- aMCC ring -->
       {% set fill_ratio = [total_sum / 28.5, 1.0] | min %}
-      {% set dashoff    = ((1 - fill_ratio) * 233.6) | round(2) %}
+      {% set dashoff    = ((1 - fill_ratio) * 263.9) | round(2) %}
       <div class="header-amcc">
         <div class="amcc-ring-wrap">
           <div class="ring-glow"></div>
           <div class="ring-outer-pulse"></div>
           <svg class="amcc-ring-svg" viewBox="0 0 110 110">
-            <circle class="ring-track" cx="55" cy="55" r="34" fill="none" stroke-width="7"/>
-            <circle class="ring-fill"  cx="55" cy="55" r="34" fill="none" stroke-width="7"
-              stroke-dasharray="213.6" stroke-dashoffset="{{ dashoff }}"/>
+            <circle class="ring-track" cx="55" cy="55" r="42" fill="none" stroke-width="7"/>
+            <circle class="ring-fill"  cx="55" cy="55" r="42" fill="none" stroke-width="7"
+              stroke-dasharray="263.9" stroke-dashoffset="{{ dashoff }}"/>
           </svg>
           <div class="amcc-ring-center">
             <span class="arc-val">{{ total_sum | round(1) }}</span>
