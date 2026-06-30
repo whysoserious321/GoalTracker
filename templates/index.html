@@ -420,8 +420,9 @@
         if (e.isIntersecting) {
           e.target.classList.add('visible');
           revObs.unobserve(e.target);
-          /* Chart canvases need a resize signal after their parent opacity-transitions in */
+          /* Build charts lazily on first reveal, then resize once the card has transitioned in */
           if (e.target.querySelector('canvas')) {
+            buildCharts();
             setTimeout(() => window.dispatchEvent(new Event('resize')), 750);
           }
         }
@@ -544,6 +545,12 @@
       btn.addEventListener('mousedown',  e => addRipple(btn, e));
     });
 
+    /* ── Charts: built lazily on first reveal (triggered by revObs) ─ */
+    let chartsBuilt = false;
+    function buildCharts() {
+      if (chartsBuilt) return;
+      chartsBuilt = true;
+
     /* ── Bar charts (weekly goals) ───────────────────────────── */
     weeklyGoals.forEach(goal => {
       const raw = weeklyChartData[goal];
@@ -606,6 +613,7 @@
         });
       });
     });
+    }
 
     /* ── Confetti + delayed submit ───────────────────────────── */
     function showConfetti() {

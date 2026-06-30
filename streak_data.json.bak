@@ -2814,7 +2814,7 @@
             "weekly_cardio": "skip"
         },
         "2026-06-29": {
-            "weekly_cardio": "skip"
+            "weekly_cardio": false
         }
     }
 }

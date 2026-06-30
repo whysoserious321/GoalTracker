@@ -1,11 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for
 import json
 import os
+import shutil
+import tempfile
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
-DATA_FILE = 'streak_data.json'
+DATA_FILE   = 'streak_data.json'
+BACKUP_FILE = 'streak_data.json.bak'
 
 # no_f and meditation are daily; weekly_cardio is weekly
 DAILY_GOALS   = ['no_f', 'meditation']
@@ -24,16 +27,42 @@ def load_data():
         data = {'dates': {}, 'weeks': {}, 'click_data': {}}
         save_data(data)
         return data
-    with open(DATA_FILE, 'r') as f:
-        data = json.load(f)
+    try:
+        with open(DATA_FILE, 'r') as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        # streak_data.json was truncated/corrupted (e.g. an interrupted write or
+        # power loss on the Pi). Fall back to the last known-good backup.
+        if os.path.exists(BACKUP_FILE):
+            with open(BACKUP_FILE, 'r') as f:
+                data = json.load(f)
+        else:
+            raise
     if 'weeks' not in data:
         data['weeks'] = {}
     return data
 
 
 def save_data(data):
-    with open(DATA_FILE, 'w') as f:
-        json.dump(data, f, indent=4)
+    # Atomic write: serialise to a temp file in the same directory, fsync it, then
+    # os.replace() onto the live file. An interrupted write can therefore never
+    # leave a truncated streak_data.json. The previous good copy is kept as .bak.
+    dir_name = os.path.dirname(os.path.abspath(DATA_FILE))
+    fd, tmp_path = tempfile.mkstemp(dir=dir_name, prefix='.streak_data_', suffix='.tmp')
+    try:
+        with os.fdopen(fd, 'w') as f:
+            json.dump(data, f, indent=4)
+            f.flush()
+            os.fsync(f.fileno())
+        if os.path.exists(DATA_FILE):
+            try:
+                shutil.copy2(DATA_FILE, BACKUP_FILE)
+            except OSError:
+                pass
+        os.replace(tmp_path, DATA_FILE)
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
 
 
 def get_last_n_days(n):
@@ -115,10 +144,10 @@ def index():
     day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
     # ── Daily goals ───────────────────────────────────────────────────────
+    all_dates = sorted(data['dates'].keys())
     for goal in DAILY_GOALS:
-        dow       = {d: {'achieved': 0, 'total': 0} for d in day_names}
-        all_dates = sorted(data['dates'].keys())
-        val_list  = [data['dates'][d].get(goal, None) for d in all_dates]
+        dow      = {d: {'achieved': 0, 'total': 0} for d in day_names}
+        val_list = [data['dates'][d].get(goal, None) for d in all_dates]
         cur, sorted_s = calc_streaks(val_list)
 
         current_streaks[goal]        = cur
@@ -141,7 +170,7 @@ def index():
                 total_days += 1
                 if val is True:
                     achieved_days += 1
-                day_name = datetime.strptime(date, '%Y-%m-%d').strftime('%A')
+                day_name = day_names[datetime.fromisoformat(date).weekday()]
                 dow[day_name]['total'] += 1
                 if val is True:
                     dow[day_name]['achieved'] += 1
@@ -165,9 +194,10 @@ def index():
         }
 
     # ── Weekly goals ──────────────────────────────────────────────────────
+    all_weeks        = sorted(data['weeks'].keys())
+    last_eight_weeks = get_last_n_weeks(8)
     for goal in WEEKLY_GOALS:
-        all_weeks = sorted(data['weeks'].keys())
-        val_list  = [data['weeks'][wk].get(goal, None) for wk in all_weeks]
+        val_list = [data['weeks'][wk].get(goal, None) for wk in all_weeks]
         cur, sorted_s = calc_streaks(val_list)
 
         current_streaks[goal]        = cur
@@ -198,7 +228,7 @@ def index():
         }
 
         weekly_chart_data[goal] = []
-        for week in get_last_n_weeks(8):
+        for week in last_eight_weeks:
             wk  = week['key']
             val = data['weeks'].get(wk, {}).get(goal, None)
             weekly_chart_data[goal].append({
