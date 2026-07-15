@@ -2547,6 +2547,58 @@
         },
         "2026-06-30": {
             "no_f": true,
+            "meditation": true
+        },
+        "2026-07-01": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-07-02": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-07-03": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-07-04": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-07-05": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-07-06": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-07-07": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-07-08": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-07-09": {
+            "no_f": true,
+            "meditation": true
+        },
+        "2026-07-10": {
+            "no_f": true,
+            "meditation": "skip"
+        },
+        "2026-07-11": {
+            "no_f": true,
+            "meditation": "skip"
+        },
+        "2026-07-12": {
+            "no_f": true,
+            "meditation": "skip"
+        },
+        "2026-07-13": {
+            "no_f": true,
             "meditation": "skip"
         }
     },
@@ -2815,6 +2867,12 @@
         },
         "2026-06-29": {
             "weekly_cardio": false
+        },
+        "2026-07-06": {
+            "weekly_cardio": true
+        },
+        "2026-07-13": {
+            "weekly_cardio": "skip"
         }
     }
 }
